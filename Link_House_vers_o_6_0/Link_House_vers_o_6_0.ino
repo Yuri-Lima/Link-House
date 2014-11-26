@@ -8,6 +8,9 @@
 
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 float Sensor=A0;
+float Sensor=A1;
+float Sensor=A2;
+float Sensor=A3;
 
 // Atribuir um endereço MAC para o controlador de ethernet .
 // Preencher o seu endereço aqui:
