@@ -8,9 +8,7 @@
 
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 float Sensor=A0;
-float Sensor=A1;
-float Sensor=A2;
-float Sensor=A3;
+
 
 // Atribuir um endereço MAC para o controlador de ethernet .
 // Preencher o seu endereço aqui:
@@ -185,10 +183,10 @@ void loop()
           client.println("Content-Type: text/html");
           client.println();
           client.print("<HTML> ");
-          client.print("<center> <font size=7> <font color=\"#FF0000\">ATEN&Ccedil&AtildeO! </font></font>");
-          client.print("<center> Pessoal que acender a luz, por favor apague, se perceberem que a luz est&aacute apagando &eacute pq sou eu que apago!");
-          client.println("<BR><center></B></I></U><a href=\"http://www.yurilima.com.br\"> <img src=http://yurilima.com.br/images/captura%20de%20tela%202014-09-30%20163404.jpg width 750 height=350></a></B></I></U></center>");
-         //client.println("<BR><center></B></I></U> Yuri Lima - LinkHouse");
+          client.print("<center><h2 style='color: red; font-size:30px;'> ATEN&Ccedil&AtildeO! </h2>");
+          client.print("<center><h4> Pessoal que acender a luz, por favor apague, se perceberem que a luz est&aacute apagando &eacute pq sou eu que apago!</h4>");
+          client.println("<center> <a href='http://www.yurilima.com.br\'> <img src=http://yurilima.com.br/images/captura%20de%20tela%202014-09-30%20163404.jpg width 750 height=350></a>");
+          client.println("<p style='font-size:15'>by  Yuri Lima  &  Isaac Cavalcante");
           //=========================================================================================================================
           //http://yurilima.com.br/images/logolink.jpg
           //http://yurilima.com.br/images/captura%20de%20tela%202014-09-30%20163404.jpg
@@ -210,7 +208,7 @@ void loop()
           //Temperatura
           client.print("<BR><BR><BR>");
           estadoip==1? //Operador Ternario
-          client.print(" <center> <button onclick=\"window.location.href='http://192.168.25.177/interno/1110'\">\0</button> > Codigo: 1110 > ") :       
+          client.print(" <center> <style='font-size:20px;'button onclick=\"window.location.href='http://192.168.25.177/interno/1110'\">\0</button> > Codigo: 1110 > ") :       
           client.print("<center><button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/1110'\">\0</button> > Codigo: 1110 > ");
           
                     
@@ -245,7 +243,7 @@ void loop()
                    
           //Primeiro BOTAO Luz Garangem
           estadoip==1?
-          client.print(" <center> <button onclick=\"window.location.href='http://192.168.25.177/interno/0001'\">\0</button> > Codigo: 0001 > "):
+          client.print(" <center> <button onclick=\"window.location.href='http://192.168.25.177/interno/0001'\" style=\"margin-right=50px;\">\0</button> > Codigo: 0001 > "):
           client.print("<center><button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0001'\">\0</button> > Codigo: 0001 > ");
                     
           if(A1_estado)
@@ -541,10 +539,12 @@ void loop()
          
           client.print("<BR>");
           
-          estadoip==1?
-            client.print(" <meta http-equiv=\"refresh\" content=\"4; url=http://192.168.25.177/interno \"> "):       
+          if (estadoip==1){
+            client.print(" <meta http-equiv=\"refresh\" content=\"4; url=http://192.168.25.177/interno \"> ");
+          }
+          if (estadoip==2)  {    
             client.print(" <meta http-equiv=\"refresh\" content=\"6; url=http://arduinoyuri.dyndns.org/externo \"> ");
-          
+          } 
           
           client.println("</HTML>");
           break;
