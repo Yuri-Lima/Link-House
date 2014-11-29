@@ -154,13 +154,11 @@ if (inicio_ok){
       //while(j<=73 && i<=1500 && m<=67 )
       //while(j<=91 && i<=1500 && m<=103 )
       // for (int i=0;i<=5;i++)
-       int j=1, i=0, m=13;
+       
        boolean condicao=false;
-        while(j<=91 && i<=1500 && m<=103) {            
+        for (int i=0;i<=5;i++) {            
          if (RFleitura.substring(1,13).equals(cartoes[i])){
            condicao=true;
-           Serial.println(j);
-           Serial.println(m);
            Serial.println("Usuario Valido!");
            Serial.println("Acesso Liberado!");
            digitalWrite(ledverde,HIGH);
@@ -171,10 +169,7 @@ if (inicio_ok){
            break;
                             
         }//Fecha if equals------------------------------------------------------
-       
-       j+=18;
-       m+=18;
-       i++;
+          
       }//Fecha for--------------------------------------------------------------
       if (!condicao){
            Serial.println("Usuario Invalido");
