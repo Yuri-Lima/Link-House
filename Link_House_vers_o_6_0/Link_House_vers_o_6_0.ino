@@ -183,7 +183,7 @@ void loop()
           client.println("Content-Type: text/html");
           client.println();
           client.print("<HTML> ");
-          client.print("<center><h2 style='color: red; font-size:30px;'> ATEN&Ccedil&AtildeO! </h2>");
+          client.print("<center><h2 style='color: red; font-size:30px; text-align:center;'> ATEN&Ccedil&AtildeO! </h2>");
           client.print("<center><h4> Pessoal que acender a luz, por favor apague, se perceberem que a luz est&aacute apagando &eacute pq sou eu que apago!</h4>");
           client.println("<center> <a href='http://www.yurilima.com.br\'> <img src=http://yurilima.com.br/images/captura%20de%20tela%202014-09-30%20163404.jpg width 750 height=350></a>");
           client.println("<p style='font-size:15'>by  Yuri Lima  &  Isaac Cavalcante");
