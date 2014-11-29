@@ -1,8 +1,6 @@
 
 //Inclusão de bibliotecas
 #include "SoftwareSerial.h"
-
-#include <EEPROM.h>
 #include <SD.h>
 
 SoftwareSerial RFID(12, 11); 
@@ -46,7 +44,7 @@ void setup()
   if(!SD.begin(4)){
     Serial.println("Erro ao iniciar cartao SD");
     Serial.println("Diagnostico: Sem cartao SD");
-    inicio_ok=0;
+    inicio_ok=1;
     return;
   }
   else{
@@ -63,12 +61,7 @@ void cadastro(){
       valorlido = RFID.read();
       leitura += valorlido;
       delay(5);
-//Escrevendo na EEPROM---------------------------------------------------------      
-      /*
-      for(int j=1;j<=12;j++){
-      EEPROM.write(j,leitura[j]-48);
-      }
-      */
+
 //Compara o tamanho da variavel leitura----------------------------------------      
    if (leitura.length()>=16){
       arquivo=SD.open("Carte.txt",FILE_WRITE);
@@ -82,17 +75,7 @@ void cadastro(){
    }
    Serial.print("Cartao salvo com sucesso!: ");
    Serial.println(leitura);
-   
-//Leitura na EEPROM------------------------------------------------------------
-       /*       
-        for(int c=1;c<=12;c++){
-        leitura += EEPROM.read(c);
-        cartaonovo=leitura;
-      }*/
-//Imprimi a tags salva na EEPROM-----------------------------------------------      
-      //Serial.println(cartaonovo);
-      
-       cadastro=false;
+   cadastro=false;
        
    }//Fecha  If Length
   }//Fecha If RFID available
@@ -110,8 +93,7 @@ void desabilitar(){
     Serial.println("Erro ao apagar os cartoes, tente novamente!");
   }  
 }//Fecha Desabilitar-----------------------------------------------------------
-     
-     
+
 void ativos(){
   
   if(ativos){
@@ -134,7 +116,85 @@ void ativos(){
 
 void loop() 
 {
-   if (inicio_ok){
+if (inicio_ok){
+     
+   //Inicio das leituras dos cartoes ou tags------------------------------------
+ 
+  while(RFID.available()){
+    valorlido= RFID.read();
+    delay(5);
+    RFleitura += valorlido;
+    if (RFleitura.length()>=16 ){
+      Serial.print("Numero do Cartao:");
+      Serial.println(RFleitura);
+       
+    //Abrir arquivo SD -------------------------------------------------------------- 
+      arquivo=SD.open("Carte.txt");
+      if(arquivo){
+        while(arquivo.available()){
+          leicartao = arquivo.read();
+          cartaogravado += leicartao;
+     }//fecha while Sd open---------------------------------------------------
+        arquivo.close();
+          Serial.print("Cartao salvo no SD: ");
+          Serial.println(cartaogravado.substring(1,13));
+          //Serial.println(cartaogravado.substring(19,31));
+          //Serial.println(cartaogravado.substring(37,49));
+       
+     }//Fecha if arquivo------------------------------------------------------------
+      
+      else{
+        Serial.println("Erro ao abrir o arquivo de leitura");
+      }
+      //for (int j=1, i=0, m=13;  j<=37, i<=5, m<=49; j+18, i++, m+18)
+      //for (int j=1, i=0, m=13;  j<=37, i<=5, m<=49; j++, i++, m++)
+      //Comparando os dados das tags de fabrica || salvas na EEPROM ------------------
+      //for (int j=1, m=13; j<=37, m<=49; j+18, m+18)
+      //while(j<=1009 && i<=5 && m<=1021)
+      //while(j<=73 && i<=1500 && m<=67 )
+      //while(j<=91 && i<=1500 && m<=103 )
+      // for (int i=0;i<=5;i++)
+       int j=1, i=0, m=13;
+       boolean condicao=false;
+        while(j<=91 && i<=1500 && m<=103) {            
+         if (RFleitura.substring(1,13).equals(cartoes[i])){
+           condicao=true;
+           Serial.println(j);
+           Serial.println(m);
+           Serial.println("Usuario Valido!");
+           Serial.println("Acesso Liberado!");
+           digitalWrite(ledverde,HIGH);
+           digitalWrite(portao,HIGH);
+           delay(500);
+           digitalWrite(ledverde,LOW);
+           digitalWrite(portao,LOW);
+           break;
+                            
+        }//Fecha if equals------------------------------------------------------
+       
+       j+=18;
+       m+=18;
+       i++;
+      }//Fecha for--------------------------------------------------------------
+      if (!condicao){
+           Serial.println("Usuario Invalido");
+           Serial.println("Acesso Negado");
+           digitalWrite(ledvermelho,HIGH);
+           delay(1500);
+           digitalWrite(ledvermelho,LOW);
+           
+       }
+      
+     }//Fecha RFleitura.length()------------------------------------------------
+   
+  
+}//Fecha primeiro While-------------------------------------------------------
+     
+     
+     
+     
+     
+     
     leiturabutao = digitalRead(butao);
     if (leiturabutao==HIGH) {
     //Entra no modo função
@@ -170,88 +230,7 @@ void loop()
    }//Fecha While Serial----------------------------------------------------
 }////Fecha While 1-----------------------------------------------------------
   
-//Inicio das leituras dos cartoes ou tags------------------------------------
- 
-  while(RFID.available()){
-    valorlido= RFID.read();
-    delay(5);
-    RFleitura += valorlido;
-    if (RFleitura.length()>=16 ){
-      Serial.print("Numero do Cartao:");
-      Serial.println(RFleitura);
-      
-      
-    //Abri os dados dos cartoes salvos                                              
-    /*
-       for(int c=1;c <=12;c++){
-         leitura += EEPROM.read(c);
-         cartaonovo=leitura;
-         }//Fecha for
-         Serial.print("TAG salva na EEPROM: ");
-         Serial.println(cartaonovo);
-    */     
-      
-    //Abrir arquivo SD -------------------------------------------------------------- 
-      arquivo=SD.open("Carte.txt");
-      if(arquivo){
-        while(arquivo.available()){
-          leicartao = arquivo.read();
-          cartaogravado += leicartao;
-     }//fecha while Sd open---------------------------------------------------
-        arquivo.close();
-          Serial.print("Cartao salvo no SD: ");
-          Serial.println(cartaogravado.substring(1,13));
-          //Serial.println(cartaogravado.substring(19,31));
-          //Serial.println(cartaogravado.substring(37,49));
-       
-     }//Fecha if arquivo------------------------------------------------------------
-      
-      else{
-        Serial.println("Erro ao abrir o arquivo de leitura");
-      }
-      //for (int j=1, i=0, m=13;  j<=37, i<=5, m<=49; j+18, i++, m+18)
-      //for (int j=1, i=0, m=13;  j<=37, i<=5, m<=49; j++, i++, m++)
-      //Comparando os dados das tags de fabrica || salvas na EEPROM ------------------
-      //for (int j=1, m=13; j<=37, m<=49; j+18, m+18)
-      //while(j<=1009 && i<=5 && m<=1021)
-      //while(j<=73 && i<=1500 && m<=67 )
-      //while(j<=91 && i<=1500 && m<=103 )
-      // for (int i=0;i<=5;i++)
-       int j=1, i=0, m=13;
-       boolean condicao=false;
-        while(j<=91 && i<=1500 && m<=103) {            
-         if (RFleitura.substring(1,13).equals(cartoes[i])|| RFleitura.substring(1,13).equals(cartaogravado.substring(j,m))){
-           condicao=true;
-           Serial.println(j);
-           Serial.println(m);
-           Serial.println("Usuario Valido!");
-           Serial.println("Acesso Liberado!");
-           digitalWrite(ledverde,HIGH);
-           digitalWrite(portao,HIGH);
-           delay(500);
-           digitalWrite(ledverde,LOW);
-           digitalWrite(portao,LOW);
-           break;
-                            
-        }//Fecha if equals------------------------------------------------------
-       
-       j+=18;
-       m+=18;
-       i++;
-      }//Fecha for--------------------------------------------------------------
-      if (!condicao){
-           Serial.println("Usuario Invalido");
-           Serial.println("Acesso Negado");
-           digitalWrite(ledvermelho,HIGH);
-           delay(1500);
-           digitalWrite(ledvermelho,LOW);
-           
-       }
-      
-     }//Fecha RFleitura.length()------------------------------------------------
-   
-  
-}//Fecha primeiro While-------------------------------------------------------
+
     
   RFleitura= ""; //Zera a variavel RFleitura
   
