@@ -543,7 +543,7 @@ void loop()
             client.print(" <meta http-equiv=\"refresh\" content=\"4; url=http://192.168.25.177/interno \"> ");
           }
           if (estadoip==2)  {    
-            client.print(" <meta http-equiv=\"refresh\" content=\"6; url=http://arduinoyuri.dyndns.org/externo \"> ");
+            client.print(" <meta http-equiv=\"refresh\" content=\"4; url=http://arduinoyuri.dyndns.org/externo \"> ");
           } 
           
           client.println("</HTML>");
