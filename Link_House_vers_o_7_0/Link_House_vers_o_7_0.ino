@@ -1,11 +1,8 @@
 #include <Ethernet.h>
-// the sensor communicates using SPI, so include the library:
 #include <SPI.h>
 #include <LiquidCrystal.h>
 
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
-float Sensor=A0;
-
 
 // Atribuir um endereço MAC para o controlador de ethernet .
 // Preencher o seu endereço aqui:
@@ -21,38 +18,31 @@ EthernetServer server(80);//Inicializa a biblioteca EthernetServer com os valore
 
 byte COD = B11000;
 String A0_carga = "Temperatura"; //Função do primeiro botão
-String A1_carga = "Luz da Garagem"; //Função do primeiro botão
-String A2_carga = "Luz do Jardim"; //Função do segundo botão
-String A3_carga = "Luz da Sala"; //Função do primeiro botão
-String A4_carga = "Luz da Cozinha"; //Função do segundo botão
-String A5_carga = "Luz do Quarto 01"; //Função do segundo botão
-String A6_carga = "Luz do Quarto 02"; //Função do segundo botão
-String A7_carga = "Porta da Rua"; //Função do segundo botão
-String A8_carga = "Porta da Garagem"; //Função do segundo botão
-String A9_carga = "Senso de Presenca"; //Função do segundo botão
-String A10_carga = "Sensor de Gases"; //Função do segundo botão
 
-boolean A0_estado=true; //Variável para armazenar o estado do primeiro botão
-boolean A1_estado=false; //Variável para armazenar o estado do primeiro botão
-boolean A2_estado=false; //Variável para armazenar o estado do segundo botão
-boolean A3_estado=false; //Variável para armazenar o estado do terceiro botão
-boolean A4_estado=false; //Variável para armazenar o estado do segundo botão
-boolean A5_estado=false; //Variável para armazenar o estado do terceiro botão
-boolean A6_estado=false; //Variável para armazenar o estado do primeiro botão
-boolean A7_estado=false; //Variável para armazenar o estado do segundo botão
-boolean A8_estado=false; //Variável para armazenar o estado do terceiro botão
-boolean A9_estado=false; //Variável para armazenar o estado do segundo botão
-boolean A10_estado=false; //Variável para armazenar o estado do terceiro botão
-int luzG = 31,luzJ= 32,luzS = 33,luzC = 34,luzQ1 = 35,luzQ2 = 36,portaR = 37,portaG = 38,sensorP = 39,sensorG = 40,temp, estadoip=0;
+char* Carga[] = {"Luz da Garagem","Luz do Jardim","Luz da Sala","Luz da Cozinha","Luz do Quarto 01","Luz do Quarto 02",
+"Porta da Rua","Porta da Garagem","Senso de Presenca","Sensor de Gases"}; 
+
+boolean arrayEstado[9];
+boolean A0_estado=true;
+
+int estadoip=0x00;
 int PINOUT[]= {31,32,33,34,35,36,37,38};     
-
+float sensorP = 39,sensorG = 40,Sensor=A0,temp;
 
 void setup()
 {
+	for(int C=0; C<=9;C++){
+	Carga[9];
+}  
+
+	for(int estado=0; estado<=9;estado++){
+	arrayEstado[estado]=false;
+}
+
   for (int p=31; p<=38;p++){
     pinMode(PINOUT[p],OUTPUT);
-  }
-  
+}
+ 
 
   pinMode(Sensor,INPUT); //Define o pino 6 como saída
   Ethernet.begin(mac, ip);// Inicializa o Server com o IP e Mac atribuido acima
@@ -63,9 +53,7 @@ void setup()
 void loop()
 {
  // controle(); //Vai para a função que executa o acionamento dos botões
- 
-  
-  EthernetClient client = server.available();// Verifica se tem alguém conectado
+   EthernetClient client = server.available();// Verifica se tem alguém conectado
   if (client)
   {
     boolean currentLineIsBlank = true; // A requisição HTTP termina com uma linha em branco Indica o fim da linha
@@ -84,10 +72,7 @@ void loop()
         if(valPag.endsWith("externo")){
           estadoip = 2;
         }    
-        if(valPag.endsWith("phone")){
-          estadoip = 3;
-        } 
-       
+               
         
          if(valPag.endsWith("1110")) //Se o que for pego após o IP for igual a 1110
         {
@@ -98,56 +83,56 @@ void loop()
         if(valPag.endsWith("0001")) //Se o que for pego após o IP for igual a 0001
         {
           COD = COD ^ B0001; //Executa a lógica XOR entre a variável atual de COD e o valor B0010
-          A1_estado = !A1_estado;  //Inverte o estado do terceiro acionamento  
+          arrayEstado[0] = !arrayEstado[0];  //Inverte o estado do terceiro acionamento  
         }
         
         else if(valPag.endsWith("0010")) //Senão se o que for pego após o IP for igual a 0010
         {
           COD = COD ^ B0010; //Executa a lógica XOR entre a variável atual de COD e o valor B0010
-          A2_estado = !A2_estado;  //Inverte o estado do terceiro acionamento  
+          arrayEstado[1] = !arrayEstado[1];  //Inverte o estado do terceiro acionamento  
         }
         
         else if(valPag.endsWith("0100")) //Senão se o que for pego após o IP for igual a 0100
         {
           COD = COD ^ B0100; //Executa a lógica XOR entre a variável atual de COD e o valor B0100
-          A3_estado = !A3_estado;  //Inverte o estado do terceiro acionamento      
+          arrayEstado[2] = !arrayEstado[2];  //Inverte o estado do terceiro acionamento      
         }
         
         else if(valPag.endsWith("0110")) //Senão se o que for pego após o IP for igual a 0110
         {
           COD = COD ^ B0110; //Executa a lógica XOR entre a variável atual de COD e o valor B0110
-          A4_estado = !A4_estado;  //Inverte o estado do terceiro acionamento      
+          arrayEstado[3] = !arrayEstado[3];  //Inverte o estado do terceiro acionamento      
         }
         
         else if(valPag.endsWith("0111")) //Senão se o que for pego após o IP for igual a 0111
         {
           COD = COD ^ B0111; //Executa a lógica XOR entre a variável atual de COD e o valor B0111
-          A5_estado = !A5_estado;  //Inverte o estado do terceiro acionamento      
+          arrayEstado[4] = !arrayEstado[4];  //Inverte o estado do terceiro acionamento      
         }
         else if(valPag.endsWith("0101")) //Senão se o que for pego após o IP for igual a 0101
         {
           COD = COD ^ B0101; //Executa a lógica XOR entre a variável atual de COD e o valor B0101
-          A6_estado = !A6_estado;  //Inverte o estado do terceiro acionamento      
+          arrayEstado[5] = !arrayEstado[5];  //Inverte o estado do terceiro acionamento      
         }
         else if(valPag.endsWith("0011")) //Senão se o que for pego após o IP for igual a 0011
         {
           COD = COD ^ B0011; //Executa a lógica XOR entre a variável atual de COD e o valor B0011
-          A7_estado = !A7_estado;  //Inverte o estado do terceiro acionamento      
+          arrayEstado[6] = !arrayEstado[6];  //Inverte o estado do terceiro acionamento      
         }
         else if(valPag.endsWith("0000")) //Senão se o que for pego após o IP for igual a 0000
         {
           COD = COD ^ B0000; //Executa a lógica XOR entre a variável atual de COD e o valor B0000
-          A8_estado = !A8_estado;  //Inverte o estado do terceiro acionamento      
+          arrayEstado[7] = !arrayEstado[7];  //Inverte o estado do terceiro acionamento      
         }
         else if(valPag.endsWith("1001")) //Senão se o que for pego após o IP for igual a 1001
         {
           COD = COD ^ B1001; //Executa a lógica XOR entre a variável atual de COD e o valor B1001
-          A9_estado = !A9_estado;  //Inverte o estado do terceiro acionamento      
+          arrayEstado[8] = !arrayEstado[8];  //Inverte o estado do terceiro acionamento      
         }
         else if(valPag.endsWith("1011")) //Senão se o que for pego após o IP for igual a 1011
         {
           COD = COD ^ B1011; //Executa a lógica XOR entre a variável atual de COD e o valor B1011
-          A10_estado = !A10_estado;  //Inverte o estado do terceiro acionamento      
+          arrayEstado[9] = !arrayEstado[9];  //Inverte o estado do terceiro acionamento      
         }
         //=========================================================================================================================
         if (c == '\n' && currentLineIsBlank)
@@ -182,8 +167,10 @@ void loop()
           //Temperatura
           client.print("<BR><BR><BR>");
           estadoip==1? //Operador Ternario
-          client.print(" <center> <style='font-size:20px;'button onclick=\"window.location.href='http://192.168.25.177/interno/1110'\">\0</button> > Codigo: 1110 > ") :       
-          client.print("<center><button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/1110'\">\0</button> > Codigo: 1110 > ");
+          client.print(" <center> <style='font-size:20px; 'button onclick=\"window.location.href='http://192.168.25.177/interno/1110' \">\0</button> > Codigo: 1110 > ") 
+          :       
+          
+          client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/1110'\">\0</button> > Codigo: 1110 > ");
           
                     
          if(A0_estado)
@@ -199,7 +186,7 @@ void loop()
             client.print("*C </font></font></center>"); 
             client.print("</span></B></center>");
             client.print("</span></B></center>");
-              
+            
           }         
           else
           {
@@ -208,6 +195,7 @@ void loop()
             client.print(A0_carga);
             client.print(" atual. ");
             client.print("</span></B></center>");
+            
            
             
           }          
@@ -217,15 +205,15 @@ void loop()
                    
           //Primeiro BOTAO Luz Garangem
           estadoip==1?
-          client.print(" <center> <button onclick=\"window.location.href='http://192.168.25.177/interno/0001'\" style=\"margin-right=50px;\">\0</button> > Codigo: 0001 > "):
-          client.print("<center><button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0001'\">\0</button> > Codigo: 0001 > ");
+          client.print(" <center> <style='font-size:20px; 'button onclick=\"window.location.href='http://192.168.25.177/interno/0001'\">\0</button> > Codigo: 0001 > "):
+          client.print(" <center> <style='font-size:20px; 'button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0001'\">\0</button> > Codigo: 0001 > ");
                     
-          if(A1_estado)
+          if(arrayEstado[0])
           {           
             client.print("<B><span style=\"color: #000000;\">");  
-            client.print(A1_carga);
+            client.print(Carga[0]);
             delay(10);
-            digitalWrite(luzG,HIGH);
+            //digitalWrite(luzG,HIGH);
             client.print("</span></B></left>");
             client.print("<B><span style=\"color: #00ff00;\">");
             client.print(" - ON");     
@@ -234,9 +222,9 @@ void loop()
           else
           {
             client.print("<B><span style=\"color: #000000;\">");
-            client.print(A1_carga);
+            client.print(Carga[0]);
             delay(10);
-            digitalWrite(luzG,LOW);
+            //digitalWrite(luzG,LOW);
             client.print("</span></B></left>");
             client.print("<B><span style=\"color: #ff0000;\">");
             client.print(" - OFF");
@@ -246,15 +234,15 @@ void loop()
           //Segundo BOTAO Luz Jardim
           client.print("<BR>");
           estadoip==1?
-          client.print("<center><button onclick=\"window.location.href='http://192.168.25.177/interno/0010'\">\0</button> > Codigo: 0010 > "):
-          client.print("<center><button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0010'\">\0</button> > Codigo: 0010 > ");
+          client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://192.168.25.177/interno/0010'\">\0</button> > Codigo: 0010 > "):
+          client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0010'\">\0</button> > Codigo: 0010 > ");
          
-          if(A2_estado)
+          if(arrayEstado[1])
           {           
             client.print("<B><span style=\"color: #000000;\">");  
-            client.print(A2_carga);
+            client.print(Carga[1]);
             delay(10);
-            digitalWrite(luzJ,HIGH);
+            //digitalWrite(luzJ,HIGH);
             client.print("</span></B></left>");
             client.print("<B><span style=\"color: #00ff00;\">");
             client.print(" - ON");     
@@ -263,9 +251,9 @@ void loop()
           else
           {
             client.print("<B><span style=\"color: #000000;\">");
-            client.print(A2_carga);
+            client.print(Carga[1]);
             delay(10);
-            digitalWrite(luzJ,LOW);
+            //digitalWrite(luzJ,LOW);
             client.print("</span></B></left>");
             client.print("<B><span style=\"color: #ff0000;\">");
             client.print(" - OFF");
@@ -275,15 +263,15 @@ void loop()
  //Terceiro BOTAO
            client.print("<BR>");
            estadoip==1?
-           client.print("<center><button onclick=\"window.location.href='http://192.168.25.177/interno/0100'\">\0</button> > Codigo: 0100 > "):
-           client.print("<center><button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0100'\">\0</button> > Codigo: 0100 > ");
+           client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://192.168.25.177/interno/0100'\">\0</button> > Codigo: 0100 > "):
+           client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0100'\">\0</button> > Codigo: 0100 > ");
                     
-          if(A3_estado)
+          if(arrayEstado[2])
           {           
             client.print("<B><span style=\"color: #000000;\">");  
-            client.print(A3_carga);
+            client.print(Carga[2]);
             delay(10);
-            digitalWrite(luzS,HIGH);
+            //digitalWrite(luzS,HIGH);
             client.print("</span></B></left>");
             client.print("<B><span style=\"color: #00ff00;\">");
             client.print(" - ON");     
@@ -292,9 +280,9 @@ void loop()
           else
           {
             client.print("<B><span style=\"color: #000000;\">");
-            client.print(A3_carga);
+            client.print(Carga[2]);
             delay(10);
-            digitalWrite(luzS,LOW);
+            //digitalWrite(luzS,LOW);
             client.print("</span></B></left>");
             client.print("<B><span style=\"color: #ff0000;\">");
             client.print(" - OFF");
@@ -304,15 +292,15 @@ void loop()
  //Quarto BOTAO
           client.print("<BR>");
           estadoip==1?
-          client.print("<center><button onclick=\"window.location.href='http://192.168.25.177/interno/0110'\">\0</button> > Codigo: 0110 > "):
-          client.print("<center><button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0110'\">\0</button> > Codigo: 0110 > ");
+          client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://192.168.25.177/interno/0110'\">\0</button> > Codigo: 0110 > "):
+          client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0110'\">\0</button> > Codigo: 0110 > ");
                     
-          if(A4_estado)
+          if(arrayEstado[3])
           {           
             client.print("<B><span style=\"color: #000000;\">");  
-            client.print(A4_carga);
+            client.print(Carga[3]);
             delay(10);
-            digitalWrite(luzC,HIGH);
+            //digitalWrite(luzC,HIGH);
             client.print("</span></B></left>");
             client.print("<B><span style=\"color: #00ff00;\">");
             client.print(" - ON");     
@@ -321,9 +309,9 @@ void loop()
           else
           {
             client.print("<B><span style=\"color: #000000;\">");
-            client.print(A4_carga);
+            client.print(Carga[3]);
             delay(10);
-            digitalWrite(luzC,LOW);
+            //digitalWrite(luzC,LOW);
             client.print("</span></B></left>");
             client.print("<B><span style=\"color: #ff0000;\">");
             client.print(" - OFF");
@@ -333,15 +321,15 @@ void loop()
  //Quinto BOTAO
            client.print("<BR>");
            estadoip==1?
-           client.print("<center><button onclick=\"window.location.href='http://192.168.25.177/interno/0111'\">\0</button> > Codigo: 0111 > "):
-           client.print("<center><button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0111'\">\0</button> > Codigo: 0111 > ");
+           client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://192.168.25.177/interno/0111'\">\0</button> > Codigo: 0111 > "):
+           client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0111'\">\0</button> > Codigo: 0111 > ");
           
-          if(A5_estado)
+          if(arrayEstado[4])
           {           
             client.print("<B><span style=\"color: #000000;\">");  
-            client.print(A5_carga);
+            client.print(Carga[4]);
             delay(10);
-            digitalWrite(luzQ1,HIGH);
+            //digitalWrite(luzQ1,HIGH);
             client.print("</span></B></left>");
             client.print("<B><span style=\"color: #00ff00;\">");
             client.print(" - ON");     
@@ -350,9 +338,9 @@ void loop()
           else
           {
             client.print("<B><span style=\"color: #000000;\">");
-            client.print(A5_carga);
+            client.print(Carga[4]);
             delay(10);
-            digitalWrite(luzQ1,LOW);
+            //digitalWrite(luzQ1,LOW);
             client.print("</span></B></left>");
             client.print("<B><span style=\"color: #ff0000;\">");
             client.print(" - OFF");
@@ -362,15 +350,15 @@ void loop()
        //Sexto BOTAO
        client.print("<BR>");
            estadoip==1?
-           client.print("<center><button onclick=\"window.location.href='http://192.168.25.177/interno/0101'\">\0</button> > Codigo: 0101 > "):
-           client.print("<center><button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0101'\">\0</button> > Codigo: 0101 > ");
+           client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://192.168.25.177/interno/0101'\">\0</button> > Codigo: 0101 > "):
+           client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0101'\">\0</button> > Codigo: 0101 > ");
           
-           if(A6_estado)
+           if(arrayEstado[5])
           {           
             client.print("<B><span style=\"color: #000000;\">");  
-            client.print(A6_carga);
+            client.print(Carga[5]);
             delay(10);
-            digitalWrite(luzQ2,HIGH);
+            //digitalWrite(luzQ2,HIGH);
             client.print("</span></B></left>");
             client.print("<B><span style=\"color: #00ff00;\">");
             client.print(" - ON");     
@@ -379,9 +367,9 @@ void loop()
           else
           {
             client.print("<B><span style=\"color: #000000;\">");
-            client.print(A6_carga);
+            client.print(Carga[5]);
             delay(10);
-            digitalWrite(luzQ2,LOW);
+            //digitalWrite(luzQ2,LOW);
             client.print("</span></B></left>");
             client.print("<B><span style=\"color: #ff0000;\">");
             client.print(" - OFF");
@@ -392,28 +380,26 @@ void loop()
           //Setimo BOTAO
           client.print("<BR>");
            estadoip==1?
-           client.print("<center><button onclick=\"window.location.href='http://192.168.25.177/interno/0011'\">\0</button> > Codigo: 0011 > "):
-           client.print("<center><button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0011'\">\0</button> > Codigo: 0011 > ");
+           client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://192.168.25.177/interno/0011'\">\0</button> > Codigo: 0011 > "):
+           client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0011'\">\0</button> > Codigo: 0011 > ");
           
-          if(A7_estado)
+          if(arrayEstado[6])
           {           
             client.print("<B><span style=\"color: #000000;\">");  
-            client.print(A7_carga);
+            client.print(Carga[6]);
             delay(10);
-            digitalWrite(portaR,A7_estado);
-            delay(500);
             client.print("</span></B></left>");
             client.print("<B><span style=\"color: #00ff00;\">");
             client.print(" - ON");     
             client.print("</span></B></left>");
-            A7_estado=false;
+            
           }         
           else
           {
             client.print("<B><span style=\"color: #000000;\">");
-            client.print(A7_carga);
+            client.print(Carga[6]);
             delay(10);
-            digitalWrite(portaR,LOW);
+            //digitalWrite(portaR,LOW);
             client.print("</span></B></left>");
             client.print("<B><span style=\"color: #ff0000;\">");
             client.print(" - OFF");
@@ -424,15 +410,15 @@ void loop()
           //Oitavo BOTAO
           client.print("<BR>");
            estadoip==1?
-           client.print("<center><button onclick=\"window.location.href='http://192.168.25.177/interno/0000'\">\0</button> > Codigo: 0000 > "):
-           client.print("<center><button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0000'\">\0</button> > Codigo: 0000 > ");
+           client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://192.168.25.177/interno/0000'\">\0</button> > Codigo: 0000 > "):
+           client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0000'\">\0</button> > Codigo: 0000 > ");
           
-          if(A8_estado)
+          if(arrayEstado[7])
           {           
             client.print("<B><span style=\"color: #000000;\">");  
-            client.print(A8_carga);
+            client.print(Carga[7]);
             delay(10);
-            digitalWrite(portaG,HIGH);
+            //digitalWrite(portaG,HIGH);
             client.print("</span></B></left>");
             client.print("<B><span style=\"color: #00ff00;\">");
             client.print(" - ON");     
@@ -441,9 +427,9 @@ void loop()
           else
           {
             client.print("<B><span style=\"color: #000000;\">");
-            client.print(A8_carga);
+            client.print(Carga[7]);
             delay(10);
-            digitalWrite(portaG,LOW);
+            //digitalWrite(portaG,LOW);
             client.print("</span></B></left>");
             client.print("<B><span style=\"color: #ff0000;\">");
             client.print(" - OFF");
@@ -454,15 +440,14 @@ void loop()
           //Nono BOTAO
           client.print("<BR>");
            estadoip==1?
-           client.print("<center><button onclick=\"window.location.href='http://192.168.25.177/interno/1001'\">\0</button> > Codigo: 1001 > "):
-           client.print("<center><button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/1001'\">\0</button> > Codigo: 1001 > ");
+           client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://192.168.25.177/interno/1001'\">\0</button> > Codigo: 1001 > "):
+           client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/1001'\">\0</button> > Codigo: 1001 > ");
           
-          if(A9_estado)
+          if(arrayEstado[8])
           {           
             client.print("<B><span style=\"color: #000000;\">");  
-            client.print(A9_carga);
+            client.print(Carga[8]);
             delay(10);
-            digitalWrite(sensorP,HIGH);
             client.print("</span></B></left>");
             client.print("<B><span style=\"color: #00ff00;\">");
             client.print(" - ON");     
@@ -471,9 +456,8 @@ void loop()
           else
           {
             client.print("<B><span style=\"color: #000000;\">");
-            client.print(A9_carga);
+            client.print(Carga[8]);
             delay(10);
-            digitalWrite(sensorP,LOW);
             client.print("</span></B></left>");
             client.print("<B><span style=\"color: #ff0000;\">");
             client.print(" - OFF");
@@ -484,15 +468,14 @@ void loop()
           //Decimo BOTAO
           client.print("<BR>");
            estadoip==1?
-           client.print("<center><button onclick=\"window.location.href='http://192.168.25.177/interno/1011'\">\0</button> > Codigo: 1011 > "):
-           client.print("<center><button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/01011'\">\0</button> > Codigo: 1011 > ");
+           client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://192.168.25.177/interno/1011'\">\0</button> > Codigo: 1011 > "):
+           client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/01011'\">\0</button> > Codigo: 1011 > ");
           
-          if(A10_estado)
+          if(arrayEstado[9])
           {           
             client.print("<B><span style=\"color: #000000;\">");  
-            client.print(A10_carga);
+            client.print(Carga[9]);
             delay(10);
-            digitalWrite(sensorG,HIGH);
             client.print("</span></B></left>");
             client.print("<B><span style=\"color: #00ff00;\">");
             client.print(" - ON");     
@@ -501,9 +484,8 @@ void loop()
           else
           {
             client.print("<B><span style=\"color: #000000;\">");
-            client.print(A10_carga);
+            client.print(Carga[9]);
             delay(10);
-            digitalWrite(sensorG,LOW);
             client.print("</span></B></left>");
             client.print("<B><span style=\"color: #ff0000;\">");
             client.print(" - OFF");
@@ -512,13 +494,13 @@ void loop()
           //=========================================================================================================================
          
           client.print("<BR>");
-          
+          /*
           if (estadoip==1){
             client.print(" <meta http-equiv=\"refresh\" content=\"4; url=http://192.168.25.177/interno \"> ");
           }
           if (estadoip==2)  {    
             client.print(" <meta http-equiv=\"refresh\" content=\"4; url=http://arduinoyuri.dyndns.org/externo \"> ");
-          } 
+          } */
           
           client.println("</HTML>");
           break;
