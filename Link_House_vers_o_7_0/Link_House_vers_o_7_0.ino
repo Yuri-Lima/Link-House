@@ -205,8 +205,8 @@ void loop()
                    
           //Primeiro BOTAO Luz Garangem
           estadoip==1?
-          client.print(" <center> <style='font-size:20px; 'button onclick=\"window.location.href='http://192.168.25.177/interno/0001'\">\0</button> > Codigo: 0001 > "):
-          client.print(" <center> <style='font-size:20px; 'button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0001'\">\0</button> > Codigo: 0001 > ");
+          client.print(" <center> <button onclick=\"window.location.href='http://192.168.25.177/interno/0001'\">\0</button> > Codigo: 0001 >"):
+          client.print(" <center> <button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0001'\">\0</button> > Codigo: 0001 > ");
                     
           if(arrayEstado[0])
           {           
@@ -234,8 +234,8 @@ void loop()
           //Segundo BOTAO Luz Jardim
           client.print("<BR>");
           estadoip==1?
-          client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://192.168.25.177/interno/0010'\">\0</button> > Codigo: 0010 > "):
-          client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0010'\">\0</button> > Codigo: 0010 > ");
+          client.print("<center> <button onclick=\"window.location.href='http://192.168.25.177/interno/0010'\">\0</button> > Codigo: 0010 > "):
+          client.print("<center> <button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0010'\">\0</button> > Codigo: 0010 > ");
          
           if(arrayEstado[1])
           {           
@@ -263,8 +263,8 @@ void loop()
  //Terceiro BOTAO
            client.print("<BR>");
            estadoip==1?
-           client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://192.168.25.177/interno/0100'\">\0</button> > Codigo: 0100 > "):
-           client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0100'\">\0</button> > Codigo: 0100 > ");
+           client.print("<center> <button onclick=\"window.location.href='http://192.168.25.177/interno/0100'\">\0</button> > Codigo: 0100 > "):
+           client.print("<center> <button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0100'\">\0</button> > Codigo: 0100 > ");
                     
           if(arrayEstado[2])
           {           
@@ -292,8 +292,8 @@ void loop()
  //Quarto BOTAO
           client.print("<BR>");
           estadoip==1?
-          client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://192.168.25.177/interno/0110'\">\0</button> > Codigo: 0110 > "):
-          client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0110'\">\0</button> > Codigo: 0110 > ");
+          client.print("<center> <button onclick=\"window.location.href='http://192.168.25.177/interno/0110'\">\0</button> > Codigo: 0110 > "):
+          client.print("<center> <button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0110'\">\0</button> > Codigo: 0110 > ");
                     
           if(arrayEstado[3])
           {           
@@ -321,8 +321,8 @@ void loop()
  //Quinto BOTAO
            client.print("<BR>");
            estadoip==1?
-           client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://192.168.25.177/interno/0111'\">\0</button> > Codigo: 0111 > "):
-           client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0111'\">\0</button> > Codigo: 0111 > ");
+           client.print("<center> <button onclick=\"window.location.href='http://192.168.25.177/interno/0111'\">\0</button> > Codigo: 0111 > "):
+           client.print("<center> <button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0111'\">\0</button> > Codigo: 0111 > ");
           
           if(arrayEstado[4])
           {           
@@ -350,8 +350,8 @@ void loop()
        //Sexto BOTAO
        client.print("<BR>");
            estadoip==1?
-           client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://192.168.25.177/interno/0101'\">\0</button> > Codigo: 0101 > "):
-           client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0101'\">\0</button> > Codigo: 0101 > ");
+           client.print("<center> <button onclick=\"window.location.href='http://192.168.25.177/interno/0101'\">\0</button> > Codigo: 0101 > "):
+           client.print("<center> <button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0101'\">\0</button> > Codigo: 0101 > ");
           
            if(arrayEstado[5])
           {           
@@ -380,8 +380,8 @@ void loop()
           //Setimo BOTAO
           client.print("<BR>");
            estadoip==1?
-           client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://192.168.25.177/interno/0011'\">\0</button> > Codigo: 0011 > "):
-           client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0011'\">\0</button> > Codigo: 0011 > ");
+           client.print("<center> <button onclick=\"window.location.href='http://192.168.25.177/interno/0011'\">\0</button> > Codigo: 0011 > "):
+           client.print("<center> <button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0011'\">\0</button> > Codigo: 0011 > ");
           
           if(arrayEstado[6])
           {           
@@ -410,8 +410,8 @@ void loop()
           //Oitavo BOTAO
           client.print("<BR>");
            estadoip==1?
-           client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://192.168.25.177/interno/0000'\">\0</button> > Codigo: 0000 > "):
-           client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0000'\">\0</button> > Codigo: 0000 > ");
+           client.print("<center> <button onclick=\"window.location.href='http://192.168.25.177/interno/0000'\">\0</button> > Codigo: 0000 > "):
+           client.print("<center> <button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0000'\">\0</button> > Codigo: 0000 > ");
           
           if(arrayEstado[7])
           {           
@@ -440,8 +440,8 @@ void loop()
           //Nono BOTAO
           client.print("<BR>");
            estadoip==1?
-           client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://192.168.25.177/interno/1001'\">\0</button> > Codigo: 1001 > "):
-           client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/1001'\">\0</button> > Codigo: 1001 > ");
+           client.print("<center> <button onclick=\"window.location.href='http://192.168.25.177/interno/1001'\">\0</button> > Codigo: 1001 > "):
+           client.print("<center> <button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/1001'\">\0</button> > Codigo: 1001 > ");
           
           if(arrayEstado[8])
           {           
@@ -468,8 +468,8 @@ void loop()
           //Decimo BOTAO
           client.print("<BR>");
            estadoip==1?
-           client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://192.168.25.177/interno/1011'\">\0</button> > Codigo: 1011 > "):
-           client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/01011'\">\0</button> > Codigo: 1011 > ");
+           client.print("<center> <button onclick=\"window.location.href='http://192.168.25.177/interno/1011'\">\0</button> > Codigo: 1011 > "):
+           client.print("<center> <button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/01011'\">\0</button> > Codigo: 1011 > ");
           
           if(arrayEstado[9])
           {           
@@ -494,13 +494,13 @@ void loop()
           //=========================================================================================================================
          
           client.print("<BR>");
-          /*
+          
           if (estadoip==1){
             client.print(" <meta http-equiv=\"refresh\" content=\"4; url=http://192.168.25.177/interno \"> ");
           }
           if (estadoip==2)  {    
             client.print(" <meta http-equiv=\"refresh\" content=\"4; url=http://arduinoyuri.dyndns.org/externo \"> ");
-          } */
+          } 
           
           client.println("</HTML>");
           break;
