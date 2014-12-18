@@ -3,7 +3,7 @@
 #include "SoftwareSerial.h"
 #include <SD.h>
 #define botao 2
-SoftwareSerial RFID(12, 11);
+SoftwareSerial RFID(12, 11); 
 
 //Variaceis Strigs e Char-------------------------------------------------------
 String RFleitura="",cartaogravado="",opcao="",Leite="";
@@ -14,7 +14,6 @@ char valorlido[17]={};
 //Classe da biblioteca Sd que ajuda na manipulação de arquivos------------------
 //Classe File
 File arquivo;
-File Doc;
 //Condicao para ir para o loop se o cartao sd estiver ok
 byte ok;
 
@@ -50,11 +49,9 @@ void Cadastro(){
         for(char i=1; i<=13;i++){
           Leite=lei;
         }
-        arquivo=SD.open("cadas.doc",FILE_WRITE);
-        //arquivo=SD.open("novo.txt",FILE_WRITE);
+        arquivo=SD.open("cadastro.txt",FILE_WRITE);
         if(arquivo){
-          arquivo.println(Leite.substring(1,13)+';');
-          
+          arquivo.println(Leite.substring(1,13));
           Serial.print("Cartao salvo com sucesso!: ");
           for(char i=1; i<=13;i++){
             Serial.print(lei[i]);
@@ -70,74 +67,21 @@ void Cadastro(){
   }//Fecha While flag
  
 }//Fecha Funcao Cadastro------------------------------------------------------
-/*
-void Recadastro(){
-  Serial.println("Deseja cadastrar o cartao?");
-  Serial.println("S ou N");
-  while(1){
-    if(Serial.available()){
-     char op=Serial.read();
-      switch(op){
-       case 'S': Cadastro();break;
-       case 's': Cadastro();break;
-       case 'N': Serial.println("Fale com a Administração!");return; break;
-       case 'n': Serial.println("Fale com a Administração!");return; break;
-       default: Serial.println("Funcao invalida");break;
-      }
-    }   
-  }
-}*/
-
 
 void Desabilitar(){
-  
-Serial.println(RFleitura.substring(1,13));  
-if(RFleitura.substring(1,13).equals(cartaogravado.substring(0,12))){
-      Serial.println("Yuri");
-    }
-
-
-  /*String RF="";
-  char valor[17]={};
-  Serial.println("Passe o cartao a ser excluido!");
-    if (RFID2.available()){
-      for(char j=0;j<=15;j++){
-       valor[j]= RFID2.read();                         //Valolido é char
-       delay(10);
-      }
-      if (sizeof(valor)>=15){                          //Verifica o tamanho de valorlido
-       Serial.print("Numero do Cartao: ");
-        for(char j=1;j<=14;j++){                           //Faz a leitura do array valor lido sem lixo
-         Serial.print(valor[j]);                      //A posição [0] e [15] são espaços em branco
-         RF=valor;                             //Armazena na Strnig RFleitura para posterior comparação com cartões guardados no SD     
-        }       
-      }//Fecha SizaOf-------------------------------------------------------------
-    }//Fecha primeiro While-------------------------------------------------------
-    if(RF.substring(1,13).equals(cartaogravado.substring(0,12))){
-      Serial.println("Yuri");
-    }
-    else if(RF.substring(1,13).equals(cartaogravado.substring(14,26))){
-     Serial.println("Patricia");
-    }
-    else{
-      Serial.println("Nada");
-    }
-  */
-  
-
-  //if(RFleitura.)
- /* SD.remove("cadastro.txt");
+  SD.remove("cadastro.txt");
   if(!SD.exists("cadastro.txt")){
     Serial.println("Cartoes apagados com sucesso");
     cartaogravado="";
+    return;
   }
   else{
     Serial.println("Erro ao apagar os cartoes, tente novamente!");
-  } */
+  } 
 }//Fecha Desabilitar-----------------------------------------------------------
 
 void Ativos(){
- arquivo = SD.open("cadas.doc",FILE_READ);
+ arquivo = SD.open("cadastro.txt",FILE_READ);
   if (arquivo) {
     Serial.println("Cartoes cadastrado: ");
     while (arquivo.available()) {
@@ -170,13 +114,13 @@ void Menu(){
       funcaolida = Serial.read();
       switch (funcaolida) {
         case '1': Cadastro();
-        return;
+        //return;
         break;
         case '2': Desabilitar();
-        return;
+        //return;
         break;
         case '3': Ativos();
-        return;
+        //return;
         break;
         default: Serial.println("Funcao invalida");
         return;
@@ -186,8 +130,7 @@ void Menu(){
 }//Fecha Leiturabotao()----------------------------------------------------------
 
 void Verificar(){
- // Faz as comparações com o que esta gravado no SD e com o ponteiro char* cartoes[]  
-  AbrirSD();     
+ // Faz as comparações com o que esta gravado no SD e com o ponteiro char* cartoes[] 
   if ( RFleitura.substring(1,13).equals(cartaogravado.substring(0,12))
     || RFleitura.substring(1,13).equals(cartaogravado.substring(14,26))
     || RFleitura.substring(1,13).equals(cartaogravado.substring(28,40))
@@ -237,18 +180,16 @@ void Verificar(){
     || RFleitura.substring(1,13).equals(cartaogravado.substring(644,656))
     || RFleitura.substring(1,13).equals(cartaogravado.substring(658,670))
     || RFleitura.substring(1,13).equals(cartaogravado.substring(672,684))
-    || RFleitura.substring(1,13).equals(cartaogravado.substring(686,698)) 
+    || RFleitura.substring(1,13).equals(cartaogravado.substring(686,698))
     //Para aumentar o numero de comparações: cartaogravado.substring(487 + 18,481 + 18)
    ){
     Serial.println("Usuario Valido!");
     Serial.println("Acesso Liberado!");
-    Menu();
     //Cargas();
   }//Fecha if -----------------------------------------------------------------
   else{
     Serial.println("Acesso Negado");
     Serial.println("Fale com a Administracao");
-    Menu();
     //Recadastro();
   }
 }
@@ -257,7 +198,7 @@ return;
 }
 void AbrirSD(){
 //Abrir arquivo SD -------------------------------------------------------- 
-  arquivo=SD.open("cadas.doc");
+  arquivo=SD.open("Cadastro.txt");
   if(arquivo){
     while(arquivo.available()){
       leicartao = arquivo.read();                    //leicartao é char
@@ -269,7 +210,6 @@ void AbrirSD(){
     //Serial.println("Erro ao abrir o arquivo de leitura");
   }
 }
-
 void Passatag(){
   //Inicio das leituras dos cartoes ou tags-------------------------------------
   while(RFID.available()){
@@ -281,9 +221,11 @@ void Passatag(){
      Serial.print("Numero do Cartao: ");
       for(char j=1;j<=14;j++){                           //Faz a leitura do array valor lido sem lixo
         Serial.print(valorlido[j]);                      //A posição [0] e [15] são espaços em branco
-        RFleitura=valorlido;                             //Armazena na Strnig RFleitura para posterior comparação com cartões guardados no SD     
+        RFleitura=valorlido; 
+                                   //Armazena na Strnig RFleitura para posterior comparação com cartões guardados no SD     
       }       
-      Verificar();
+        AbrirSD();
+        Verificar();
     }//Fecha SizaOf-------------------------------------------------------------
   }//Fecha primeiro While-------------------------------------------------------
 }
