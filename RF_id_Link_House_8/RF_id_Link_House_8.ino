@@ -18,7 +18,7 @@ File arquivo;
 File Doc;
 //Condicao para ir para o loop se o cartao sd estiver ok
 byte ok;
-
+String desativado="000000000000\0";
 //Inicio da função Setup--------------------------------------------------------
 void setup(){ 
   pinMode(botao,INPUT_PULLUP);
@@ -65,10 +65,10 @@ void Desabilitar(){
           Serial.println(m); 
 
           Serial.println("Cartao desabilitado com sucesso!");
-          arquivo=SD.open("cadas.doc",FILE_WRITE);
+          arquivo=SD.open("cadas.txt",FILE_WRITE);
           if(arquivo){
             arquivo.seek(m);
-            arquivo.println("000000000000");
+            arquivo.println(desativado.substring(0,12));
             cartaogravado="";
             //Temos que fechar o arquivo o mais cedo possivel para liberar o ponteiro do arquivo     
             arquivo.close();
@@ -92,8 +92,10 @@ void Desabilitar(){
 }//Fecha Funcao Cadastro------------------------------------------------------
 
 void Cadastro(){
-  int m;
-  String desativado="000000000000";
+  
+  int m,b;
+  
+  boolean flag=false;
   AbrirSD();
   Serial.println("Passe o cartao novo.");
   while(1){
@@ -104,53 +106,55 @@ void Cadastro(){
       }
       if (sizeof(lei)>=15){
         Leite=lei;
-        boolean flag=false; 
+        
         for(m=0;m<686;m+=14){ 
           if(Leite.substring(1,13).equals(cartaogravado.substring(m,m+12))){
-            flag=true;
-            break;
+            Serial.print("Este cartão já esta cadastrado! ");
+            Serial.println(m);
+            return;
           }
         }
-        if (flag){
-          Serial.print("Este cartão já esta cadastrado!");
-          Serial.println(m);
-        }   
-        else if (1) {
-          arquivo=SD.open("cadas.doc",FILE_WRITE);
-          for(m=0;m<686;m+=14){ 
-            if (desativado.substring(0,12) ==(cartaogravado.substring(m,m+12))){
-              arquivo.seek(m);
+          if(m==686){
+            Serial.println("m=686");
+              for(b=0;b<686;b+=14){ 
+                if (desativado.substring(0,12) == (cartaogravado.substring(b,b+12))){
+                  flag=true;
+                  break;
+                }
+              }
+          }    
+            if(flag){
+              arquivo=SD.open("cadas.txt",FILE_WRITE);
+              Serial.println(m);
+              arquivo.seek(b);
               arquivo.println(Leite.substring(1,13));
-              Serial.print("Cartao salvo com sucesso!: ");
+              Serial.print("Cartao salvo com sucesso1!: ");
               Serial.println(Leite.substring(1,13));
               //Temos que fechar o arquivo o mais cedo possivel para liberar o ponteiro do arquivo     
               arquivo.close();
               Serial.println("Yuri ok");
-              break;
             }
-            else if(arquivo){
+            else {
+              arquivo=SD.open("cadas.txt",FILE_WRITE);
               arquivo.println(Leite.substring(1,13));
-              Serial.print("Cartao salvo com sucesso!: ");
+              Serial.print("Cartao salvo com sucesso2!: ");
               Serial.println(Leite.substring(1,13));
               //Temos que fechar o arquivo o mais cedo possivel para liberar o ponteiro do arquivo     
               arquivo.close();
               break;
             }
-            else{
-              Serial.println("Erro ao abrir o arquivo para escrita");
-            } 
-          }
-        }  
+           
+          
+          
       }
         Menu();
         //Fecha if -----------------------------------------------------------------
     }//Fecha If RFID available*/
   }//Fecha While flag
 }//Fecha Funcao Cadastro------------------------------------------------------
-
 void ExcluirArq(){
 
- SD.remove("cadas.doc");
+ SD.remove("cadas.txt");
   if(!SD.exists("cadastro.txt")){
     Serial.println("Cartoes apagados com sucesso");
     cartaogravado="";
@@ -161,7 +165,7 @@ void ExcluirArq(){
 }//Fecha ExcluirArq-----------------------------------------------------------
 
 void Ativos(){
- arquivo = SD.open("cadas.doc",FILE_READ);
+ arquivo = SD.open("cadas.txt",FILE_READ);
   if (arquivo) {
     Serial.println("Cartoes cadastrado: ");
     while (arquivo.available()) {
@@ -249,7 +253,7 @@ return;
 }
 void AbrirSD(){
 //Abrir arquivo SD -------------------------------------------------------- 
-  arquivo=SD.open("cadas.doc");
+  arquivo=SD.open("cadas.txt");
   if(arquivo){
     while(arquivo.available()){
       leicartao = arquivo.read();                    //leicartao é char
