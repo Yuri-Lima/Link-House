@@ -50,7 +50,7 @@ void Cadastro(){
         for(char i=1; i<=13;i++){
           Leite=lei;
         }
-        arquivo=SD.open("cadas.txt",FILE_WRITE);
+        arquivo=SD.open("cadas.doc",FILE_WRITE);
         //arquivo=SD.open("novo.txt",FILE_WRITE);
         if(arquivo){
           arquivo.println(Leite.substring(1,13));
@@ -92,7 +92,7 @@ void Recadastro(){
 void Desabilitar(){
  
 SD.remove("cadas.txt");
-  if(!SD.exists("cadas.txt")){
+  if(!SD.exists("cadas.doc")){
     Serial.println("Cartoes apagados com sucesso");
     cartaogravado="";
   }
@@ -102,7 +102,7 @@ SD.remove("cadas.txt");
 }//Fecha Desabilitar-----------------------------------------------------------
 
 void Ativos(){
- arquivo = SD.open("cadas.txt",FILE_READ);
+ arquivo = SD.open("cadas.doc",FILE_READ);
   if (arquivo) {
     Serial.println("Cartoes cadastrado: ");
     while (arquivo.available()) {

@@ -39,7 +39,62 @@ void setup(){
   Serial.println("Passe o cartao de acesso!");
 }// Fecha Setup----------------------------------------------------------------
 
+void Desabilitar(){
+  int m;
+  Serial.println("Passe o cartao que que vai Desabilitar.");
+  while(1){
+    if(RFID.available()){
+      for(int i=0;i<=15;i++){
+        lei[i]=RFID.read();
+        delay(10);
+      }
+      if (sizeof(lei)>=15){
+        Leite=lei;
+
+        AbrirSD(); 
+        boolean flag=false; 
+        for(m=0;m<686;m+=14){ 
+          if(Leite.substring(1,13).equals(cartaogravado.substring(m,m+12))){
+            flag=true;
+            break;
+          }
+        }
+        if (flag){
+          Serial.println(cartaogravado.substring(m,m+12));
+          Serial.print("Posição da gravação: ");
+          Serial.println(m); 
+
+          Serial.println("Cartao desabilitado com sucesso!");
+          arquivo=SD.open("cadas.doc",FILE_WRITE);
+          if(arquivo){
+            arquivo.seek(m);
+            arquivo.println("000000000000");
+            cartaogravado="";
+            //Temos que fechar o arquivo o mais cedo possivel para liberar o ponteiro do arquivo     
+            arquivo.close();
+            break;
+          }
+          else{
+            Serial.println("Erro ao abrir o arquivo para escrita");
+          }
+          Menu();
+        }//Fecha if -----------------------------------------------------------------
+        else{
+          Serial.println("Este cartão está desabilitado!");
+          Serial.println("Procure a administração!");
+          Menu();
+          break;
+        }
+      }
+    }//Fecha If RFID available
+  }//Fecha While flag
+ 
+}//Fecha Funcao Cadastro------------------------------------------------------
+
 void Cadastro(){
+  int m;
+  String desativado="000000000000";
+  AbrirSD();
   Serial.println("Passe o cartao novo.");
   while(1){
     if(RFID.available()){
@@ -49,25 +104,51 @@ void Cadastro(){
       }
       if (sizeof(lei)>=15){
         Leite=lei;
-        arquivo=SD.open("cadas.doc",FILE_WRITE);
-        if(arquivo){
-          arquivo.println(Leite.substring(1,13));
-          Serial.print("Cartao salvo com sucesso!: ");
-          Serial.println(Leite.substring(1,13));
-          //Temos que fechar o arquivo o mais cedo possivel para liberar o ponteiro do arquivo     
-          arquivo.close();
-          break;
+        boolean flag=false; 
+        for(m=0;m<686;m+=14){ 
+          if(Leite.substring(1,13).equals(cartaogravado.substring(m,m+12))){
+            flag=true;
+            break;
+          }
         }
-        else{
-          Serial.println("Erro ao abrir o arquivo para escrita");
-        }
+        if (flag){
+          Serial.print("Este cartão já esta cadastrado!");
+          Serial.println(m);
+        }   
+        else if (1) {
+          arquivo=SD.open("cadas.doc",FILE_WRITE);
+          for(m=0;m<686;m+=14){ 
+            if (desativado.substring(0,12) ==(cartaogravado.substring(m,m+12))){
+              arquivo.seek(m);
+              arquivo.println(Leite.substring(1,13));
+              Serial.print("Cartao salvo com sucesso!: ");
+              Serial.println(Leite.substring(1,13));
+              //Temos que fechar o arquivo o mais cedo possivel para liberar o ponteiro do arquivo     
+              arquivo.close();
+              Serial.println("Yuri ok");
+              break;
+            }
+            else if(arquivo){
+              arquivo.println(Leite.substring(1,13));
+              Serial.print("Cartao salvo com sucesso!: ");
+              Serial.println(Leite.substring(1,13));
+              //Temos que fechar o arquivo o mais cedo possivel para liberar o ponteiro do arquivo     
+              arquivo.close();
+              break;
+            }
+            else{
+              Serial.println("Erro ao abrir o arquivo para escrita");
+            } 
+          }
+        }  
       }
+        Menu();
+        //Fecha if -----------------------------------------------------------------
     }//Fecha If RFID available*/
   }//Fecha While flag
- 
 }//Fecha Funcao Cadastro------------------------------------------------------
 
-void Desabilitar(){
+void ExcluirArq(){
 
  SD.remove("cadas.doc");
   if(!SD.exists("cadastro.txt")){
@@ -77,7 +158,7 @@ void Desabilitar(){
   else{
     Serial.println("Erro ao apagar os cartoes, tente novamente!");
   } 
-}//Fecha Desabilitar-----------------------------------------------------------
+}//Fecha ExcluirArq-----------------------------------------------------------
 
 void Ativos(){
  arquivo = SD.open("cadas.doc",FILE_READ);
@@ -104,9 +185,11 @@ void Menu(){
     Serial.println();
     Serial.println("1 - Cadastro de novo cartao.");
     Serial.println();
-    Serial.println("2 - Desabilitar cartao.");
+    Serial.println("2 - Excluir arquivo.");
     Serial.println();
     Serial.println("3 - Cartoes ativos.");
+    Serial.println();
+    Serial.println("4 - Desabilitar cartão.");
     Serial.println();
     delay(100);
   }//Fecha if HIGH-------------------------------------------------------------
@@ -118,10 +201,13 @@ void Menu(){
         case '1': Cadastro();
         return;
         break;
-        case '2': Desabilitar();
+        case '2': ExcluirArq();
         return;
         break;
         case '3': Ativos();
+        return;
+        break;
+        case '4': Desabilitar();
         return;
         break;
         default: Serial.println("Funcao invalida");
