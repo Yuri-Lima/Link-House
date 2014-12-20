@@ -50,10 +50,10 @@ void Cadastro(){
         for(char i=1; i<=13;i++){
           Leite=lei;
         }
-        arquivo=SD.open("cadas.doc",FILE_WRITE);
+        arquivo=SD.open("cadas.txt",FILE_WRITE);
         //arquivo=SD.open("novo.txt",FILE_WRITE);
         if(arquivo){
-          arquivo.println(Leite.substring(1,13)+';');
+          arquivo.println(Leite.substring(1,13));
           
           Serial.print("Cartao salvo com sucesso!: ");
           for(char i=1; i<=13;i++){
@@ -90,54 +90,19 @@ void Recadastro(){
 
 
 void Desabilitar(){
-  
-Serial.println(RFleitura.substring(1,13));  
-if(RFleitura.substring(1,13).equals(cartaogravado.substring(0,12))){
-      Serial.println("Yuri");
-    }
-
-
-  /*String RF="";
-  char valor[17]={};
-  Serial.println("Passe o cartao a ser excluido!");
-    if (RFID2.available()){
-      for(char j=0;j<=15;j++){
-       valor[j]= RFID2.read();                         //Valolido é char
-       delay(10);
-      }
-      if (sizeof(valor)>=15){                          //Verifica o tamanho de valorlido
-       Serial.print("Numero do Cartao: ");
-        for(char j=1;j<=14;j++){                           //Faz a leitura do array valor lido sem lixo
-         Serial.print(valor[j]);                      //A posição [0] e [15] são espaços em branco
-         RF=valor;                             //Armazena na Strnig RFleitura para posterior comparação com cartões guardados no SD     
-        }       
-      }//Fecha SizaOf-------------------------------------------------------------
-    }//Fecha primeiro While-------------------------------------------------------
-    if(RF.substring(1,13).equals(cartaogravado.substring(0,12))){
-      Serial.println("Yuri");
-    }
-    else if(RF.substring(1,13).equals(cartaogravado.substring(14,26))){
-     Serial.println("Patricia");
-    }
-    else{
-      Serial.println("Nada");
-    }
-  */
-  
-
-  //if(RFleitura.)
- /* SD.remove("cadastro.txt");
-  if(!SD.exists("cadastro.txt")){
+ 
+SD.remove("cadas.txt");
+  if(!SD.exists("cadas.txt")){
     Serial.println("Cartoes apagados com sucesso");
     cartaogravado="";
   }
   else{
     Serial.println("Erro ao apagar os cartoes, tente novamente!");
-  } */
+  } 
 }//Fecha Desabilitar-----------------------------------------------------------
 
 void Ativos(){
- arquivo = SD.open("cadas.doc",FILE_READ);
+ arquivo = SD.open("cadas.txt",FILE_READ);
   if (arquivo) {
     Serial.println("Cartoes cadastrado: ");
     while (arquivo.available()) {
@@ -187,8 +152,10 @@ void Menu(){
 
 void Verificar(){
  // Faz as comparações com o que esta gravado no SD e com o ponteiro char* cartoes[]  
+
+
   AbrirSD();     
-  if ( RFleitura.substring(1,13).equals(cartaogravado.substring(0,12))
+  if (RFleitura.substring(1,13).equals(cartaogravado.substring(0,12))
     || RFleitura.substring(1,13).equals(cartaogravado.substring(14,26))
     || RFleitura.substring(1,13).equals(cartaogravado.substring(28,40))
     || RFleitura.substring(1,13).equals(cartaogravado.substring(42,54))
@@ -257,7 +224,7 @@ return;
 }
 void AbrirSD(){
 //Abrir arquivo SD -------------------------------------------------------- 
-  arquivo=SD.open("cadas.doc");
+  arquivo=SD.open("cadas.txt");
   if(arquivo){
     while(arquivo.available()){
       leicartao = arquivo.read();                    //leicartao é char
