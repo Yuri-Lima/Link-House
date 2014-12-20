@@ -133,6 +133,7 @@ void Cadastro(){
               //Temos que fechar o arquivo o mais cedo possivel para liberar o ponteiro do arquivo     
               arquivo.close();
               Serial.println("Yuri ok");
+              break;
             }
             else {
               arquivo=SD.open("cadas.txt",FILE_WRITE);
