@@ -7,7 +7,7 @@
 SoftwareSerial RFID(12, 11);
 
 //Variaceis Strigs e Char-------------------------------------------------------
-String RFleitura="",cartaogravado="",opcao="",Leite="";
+String RFleitura="",cartaogravado="",Leite="";
 char leicartao, leiturabutao,funcaolida;
 char lei[17]={};
 char valorlido[17]={};
@@ -24,6 +24,8 @@ void setup(){
   pinMode(botao,INPUT_PULLUP);
   Serial.begin(9600);
   RFID.begin(9600);
+  RFleitura.reserve(20);
+  cartaogravado.reserve(700);
    
   //Não vai pro loop, se não tiver cartão----------------------------------------
   ok=1;
