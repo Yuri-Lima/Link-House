@@ -125,7 +125,7 @@ void Cadastro(){
           }    
             if(flag){
               arquivo=SD.open("cadas.txt",FILE_WRITE);
-              Serial.println(m);
+              Serial.println(b);
               arquivo.seek(b);
               arquivo.println(Leite.substring(1,13));
               Serial.print("Cartao salvo com sucesso1!: ");
