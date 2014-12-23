@@ -11,7 +11,8 @@
 /*----------------------Configurção do teclado------------------------*/
 const byte ROWS = 4; //four rows
 const byte COLS = 4; //four columns
-String opcao_escolhida="";
+String opcaoEscolhida = "";
+String idRcebidoCadastro = "";
 //define the cymbols on the buttons of the keypads
 char hexaKeys[ROWS][COLS] = {
   {'*','0','#'},
@@ -48,6 +49,8 @@ void setup(){
     return;
   }
   Serial.println("Inicializacao concluida.");
+  arquivo = SD.open("cadastro.txt", FILE_WRITE);
+  arquivo.close();
 }
 
 void loop(){
@@ -55,72 +58,77 @@ void loop(){
 }
 
 void escolherOpcao(){
-  char opcao_momentanea = customKeypad.getKey();
-  if(opcao_momentanea != NO_KEY){
-    if(isdigit(opcao_momentanea)){
-      Serial.print(opcao_momentanea);
+  char opcaoMomentanea = customKeypad.getKey();
+  if(opcaoMomentanea != NO_KEY){
+    if(isdigit(opcaoMomentanea)){
+      Serial.print(opcaoMomentanea);
     }
-    if(opcao_momentanea == '*'){
+    if(opcaoMomentanea == '*'){
       escolherAcao();
-      opcao_escolhida = "";
-    }else if(opcao_momentanea == '#'){
-      opcao_escolhida = "";
+      opcaoEscolhida = "";
+    }else if(opcaoMomentanea == '#'){
+      opcaoEscolhida = "";
     }else{
-      opcao_escolhida+=opcao_momentanea;
+      opcaoEscolhida+=opcaoMomentanea;
     }
   }
 }
 
 void escolherAcao(){
   Serial.println();
-  if(opcao_escolhida.equals("10")){
-    cadastro();
+  if(opcaoEscolhida.equals("10")){
+    Serial.println("Passe o cartao para cadastro");
+    if(existeUsuario(true)){
+      Serial.println("Usuario ja cadastrado");
+    }else{
+      cadastro();
+    }
   }
   
-  if(opcao_escolhida.equals("20")){
-    acesso();
+  if(opcaoEscolhida.equals("20")){
+    Serial.println("Passe o cartao para ter acesso");
+    if(existeUsuario(false)){
+      Serial.println("Portao aberto");
+    }else{
+      Serial.println("Cadastro nao encontrado");
+    }
   }
   
-  if(opcao_escolhida.equals("30")){
+  if(opcaoEscolhida.equals("30")){
     delecao();
   }
 }
 
 void cadastro(){
-  char opcao_momentanea;
+  char opcaoMomentanea = ' ';
   String confirmacao = "";
-  String id_cartao = "";
-
-  Serial.println("Passe o cartao para cadastro");
-  
-  esperandoRFID();
   
   arquivo = SD.open("cadastro.txt", FILE_WRITE);
   
   if (arquivo){
-    Serial.print("ID do no cartao");
-    id_cartao = lendoRFID();
-    Serial.println(id_cartao);
+    Serial.print("ID do cartao ");
+    Serial.println(idRcebidoCadastro);
     Serial.println("Deseja realmente guardar esse ID?");
     Serial.println("Digite o codigo de cadastro e aperte 'ent' para confirmacao ou 'canc' para cancelar");
     
-    while(opcao_momentanea != '*'){
-      opcao_momentanea = customKeypad.getKey();
-      if(opcao_momentanea != NO_KEY){
-        if(isdigit(opcao_momentanea)){
-          Serial.print(opcao_momentanea);
+    while(opcaoMomentanea != '*'){
+      opcaoMomentanea = customKeypad.getKey();
+      if(opcaoMomentanea != NO_KEY){
+        if(isdigit(opcaoMomentanea)){
+          Serial.print(opcaoMomentanea);
         }
-        if(opcao_momentanea=='#'){
+        if(opcaoMomentanea=='#'){
           confirmacao = "";
-        }else if(opcao_momentanea != '*'){
-          confirmacao+=opcao_momentanea;
+        }else if(opcaoMomentanea != '*'){
+          confirmacao+=opcaoMomentanea;
         }
       }
     }
     
     Serial.println();
     if(confirmacao.equals("10")){
-      arquivo.println(id_cartao);
+      arquivo.print(idRcebidoCadastro); //Decidi gravar sem println, pois quando é necessário ler os dados gravados na hora do acesso acontecia incompatibilidades no tamanho das strings que comportavam o valor do cartão lido e da linha no arquivo que guardava os usuários (tamanhos diferentes)
+      arquivo.print(" ");//sendo assim esse último espaço é necessário para identificar um registro de outro na hora do acesso
       Serial.println("Gravado com sucesso.");
     }else{
       Serial.println("Gravacao cancelada.");
@@ -131,45 +139,47 @@ void cadastro(){
   }
 }
 
-void acesso(){
-  String id_recebido = "";
-  String id_lido = "";
-  boolean abertura_concedida = false;
-  char caracter_temporario;
-  Serial.println("Passe o cartao para ter acesso");
+boolean existeUsuario(boolean confirmacaoCadastro){
+  String idRecebido = "";
+  String idLido = "";
+  char caracterTemporario;
+  short contadorEspacos=0;
   
   esperandoRFID();
-  id_recebido = lendoRFID();
+  idRecebido = lendoRFID();
+  if(confirmacaoCadastro){
+    idRcebidoCadastro = idRecebido;
+  }
   
   arquivo = SD.open("cadastro.txt");
   if (arquivo){
     while (arquivo.available()){
-      caracter_temporario = arquivo.read();
-      if(caracter_temporario=='\n'){
+      caracterTemporario = arquivo.read();
+      if(caracterTemporario==' '){
+        contadorEspacos++;
+      }
+      if(contadorEspacos==4){
         Serial.print("ID lido:");
-        Serial.println(id_lido.substring(0,id_lido.length()));
-        Serial.println(id_lido.length());
+        Serial.println(idLido.substring(0,idLido.length()));
+        Serial.println(idLido.length());
         Serial.print("ID recebido:");
-        Serial.println(id_recebido.substring(0,id_recebido.length()));
-        Serial.println(id_recebido.length());
-        if(id_lido.substring(0,id_lido.length()-1).equals(id_recebido.substring(0,id_lido.length()))){ //TODO decubrir por que id_lido tem tamanho 12 e id_recebido não
-          //abertura do portao
-          abertura_concedida = true;
-          Serial.println("Portao aberto");
-          break;
+        Serial.println(idRecebido.substring(0,idRecebido.length()));
+        Serial.println(idRecebido.length());
+        if(idLido.substring(0,idLido.length()).equals(idRecebido.substring(0,idLido.length()))){
+          arquivo.close();
+          return true;
         }
-        id_lido = "";
+        idLido = "";
+        contadorEspacos=0;
       }else{
-        id_lido+=caracter_temporario;
+        idLido+=caracterTemporario;
       }
     }
-    arquivo.close();
-    if(!(abertura_concedida)){
-      Serial.println("Cadastro nao encontrado");
-    }
-  } else {
+  }else{
     Serial.println("Erro ao ler arquivo de cadastro");
   }
+  arquivo.close();
+  return false;
   
 }
 
@@ -187,14 +197,14 @@ void esperandoRFID(){
 }
 
 String lendoRFID(){
-  String id_cartao="";
+  String idCartao = "";
   int contador=0;
   for (byte i = 0; i < mfrc522.uid.size; i++){
-    id_cartao += mfrc522.uid.uidByte[i];
+    idCartao += mfrc522.uid.uidByte[i];
     if(i<mfrc522.uid.size-1){
-      id_cartao += " ";
+      idCartao += " ";
     }
   }
-  Serial.println(id_cartao);
-  return id_cartao;
+  Serial.println();
+  return idCartao;
 }
