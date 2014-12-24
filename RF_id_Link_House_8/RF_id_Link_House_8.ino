@@ -30,6 +30,8 @@ boolean Estado=false;
 boolean flag2=false;
 
 String desativado="000000000000\0";
+ 
+
 
 byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
   IPAddress ip(192,168,25,177);                  // assign an IP address for the controller: 
@@ -160,15 +162,15 @@ void Cadastro(){
         }
         // Se nao tiver, ele cadastra na linha seguinte
         else {
-          novatoInativo();
+          //novatoInativo();
           
-          /*arquivo=SD.open("cadas.txt",FILE_WRITE);
+          arquivo=SD.open("cadas.txt",FILE_WRITE);
           arquivo.println(Leite.substring(1,13));
           Serial.print("Cartao salvo com sucesso2!: ");
           Serial.println(Leite.substring(1,13));
           //Temos que fechar o arquivo o mais cedo possivel para liberar o ponteiro do arquivo     
           arquivo.close();
-          break;*/
+          break;
         }
       } //Fecha if -----------------------------------------------------------------
       //Menu();
