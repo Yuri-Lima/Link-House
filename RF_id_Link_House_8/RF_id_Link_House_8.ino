@@ -22,7 +22,7 @@ char nome[50]={};
 //Classe da biblioteca Sd que ajuda na manipulação de arquivos------------------
 //Classe File
 File arquivo;
-File Doc;
+
 //Condicao para ir para o loop se o cartao sd estiver ok
 byte ok;
 byte estadoip=0x00;                             //Variavel de teste. Se conexão interna ou externa
@@ -45,7 +45,6 @@ void setup(){
   Ethernet.begin(mac, ip);
   pinMode(botao,INPUT_PULLUP);
   Serial.begin(9600);
-  Serial2.begin(9600);
   RFID.begin(9600);
   
    
@@ -85,7 +84,7 @@ void Desabilitar(){
         }
         if (flag){
           Serial.println(cartaogravado.substring(m,m+12));
-          Serial.print("Posição da gravação: ");
+          Serial.print("Posicao da gravacao: ");
           Serial.println(m); 
 
           Serial.println("Cartao desabilitado com sucesso!");
@@ -93,20 +92,20 @@ void Desabilitar(){
           if(arquivo){
             arquivo.seek(m);
             arquivo.println(desativado.substring(0,12));
-            cartaogravado="";
             //Temos que fechar o arquivo o mais cedo possivel para liberar o ponteiro do arquivo     
             arquivo.close();
+            cartaogravado="";
             break;
           }
           else{
             Serial.println("Erro ao abrir o arquivo para escrita");
           }
-          //Menu();
+          
         }//Fecha if -----------------------------------------------------------------
         else{
-          Serial.println("Este cartão está desabilitado!");
-          Serial.println("Procure a administração!");
-          //Menu();
+          Serial.println("Este cartao esta desabilitado!");
+          Serial.println("Procure a administracao!");
+          
           break;
         }
       }
@@ -118,7 +117,6 @@ void Desabilitar(){
 void Cadastro(){
   int m,b;
   boolean flag=false;
-  AbrirSD();
   Serial.println("Passe o cartao novo.");
   while(1){
     //Realiza a leitura da tag que será cadastrada
@@ -129,20 +127,22 @@ void Cadastro(){
       }
       if (sizeof(lei)>=15){
         Leite=lei;
+        AbrirSD();
         //Ver se o cartão já está gravado no SD
         for(m=0;m<686;m+=14){ 
           if(Leite.substring(1,13).equals(cartaogravado.substring(m,m+12))){
             Serial.print("Este cartão já esta cadastrado! ");
             Serial.println(m);
-            return;
+            cartaogravado="";
+            return;//Não pode ser break pq depois de verificar ele tem que sair da função! Se colocar break ele vai sair somente do for!
           }
         }
         //Ver se tem alguma cadastro com linha zerada "000000000000\0" no SD
         if(m==686){
-          Serial.println("m=686");
-          for(b=0;b<686;b+=14){ 
-            if (desativado.substring(0,12) == (cartaogravado.substring(b,b+12))){
+            for(b=0;b<686;b+=14){ 
+            if (desativado.substring(0,12).equals(cartaogravado.substring(b,b+12))){
               flag=true;
+              cartaogravado="";
               break;
             }
           }
@@ -158,6 +158,7 @@ void Cadastro(){
           //Temos que fechar o arquivo o mais cedo possivel para liberar o ponteiro do arquivo     
           arquivo.close();
           Serial.println("Yuri ok");
+          cartaogravado="";
           break;
         }
         // Se nao tiver, ele cadastra na linha seguinte
@@ -170,6 +171,7 @@ void Cadastro(){
           Serial.println(Leite.substring(1,13));
           //Temos que fechar o arquivo o mais cedo possivel para liberar o ponteiro do arquivo     
           arquivo.close();
+          cartaogravado="";
           break;
         }
       } //Fecha if -----------------------------------------------------------------
@@ -241,10 +243,10 @@ void ExcluirArq(){
  SD.remove("cadas.txt");
   if(!SD.exists("cadastro.txt")){
     Serial.println("Cartoes apagados com sucesso");
-    cartaogravado="";
+    cartaogravado="";//Zera a String para nao habilitar mais acessos
   }
   else{
-    Serial.println("Erro ao apagar os cartoes, tente novamente!");
+    Serial.println("Arquivo não encontrado ou já excluido!");
   } 
 }//Fecha ExcluirArq-----------------------------------------------------------
 
@@ -254,14 +256,11 @@ void Ativos(){
     Serial.println("Cartoes cadastrado: ");
     while (arquivo.available()) {
     	Serial.write(arquivo.read());
-      	
-      	
-
     }
     arquivo.close();
   }
   else{
-    Serial.println("Nenhum arquivo encontrado");
+    Serial.println("Nenhuma Tag cadastrada foi encontrado!");
   }
 }//Fecha Ativos------------------------------------------------------------------- 
 
@@ -285,33 +284,33 @@ void Menu(){
       switch (Serial.read()) {
         case '1': Cadastro();
         flag2=false;
-        return;
+        
         break;
         case '2': ExcluirArq();
         flag2=false;
-        return;
+        
         break;
         case '3': Ativos();
         flag2=false;
-        return;
+        
         break;
         case '4': Desabilitar();
         flag2=false;
-        return;
+        
         break;
         default: Serial.println("Funcao invalida");
-        return;
+        break;
       }//Fecha Switch funcaolida-------------------------------------------------
     }//Fecha While Serial--------------------------------------------------------
   }//Fecha While HIGH------------------------------------------------------------
 }//Fecha Leiturabotao()----------------------------------------------------------
 
-void Verificar(){
+void Verificar(String RF){
  // Faz as comparações com o que esta gravado no SD e com o ponteiro char* cartoes[]  
   AbrirSD(); 
   boolean flag=false; 
   for(int m=0;m<686;m+=14){ 
-  	if(RFleitura.substring(1,13).equals(cartaogravado.substring(m,m+12))){
+  	if(RF.substring(1,13).equals(cartaogravado.substring(m,m+12))){
   		flag=true;
   		Serial.print(m); Serial.print(",");
 		  Serial.println(m+12);	
@@ -319,9 +318,7 @@ void Verificar(){
   	}
   }
   if (flag){
-   	
-  
-    Serial.println("Usuario Valido!");
+   	Serial.println("Usuario Valido!");
     Serial.println("Acesso Liberado!");
     //Menu();
     //Cargas();
@@ -347,7 +344,7 @@ void AbrirSD(){
     arquivo.close();
   }//Fecha if arquivo--------------------------------------------------------
   else{
-    //Serial.println("Erro ao abrir o arquivo de leitura");
+    Serial.println("Erro ao abrir o arquivo de leitura");
   }
 }
 void Passatag(){
@@ -363,7 +360,7 @@ void Passatag(){
         Serial.print(valorlido[j]);                      //A posição [0] e [15] são espaços em branco
         RFleitura=valorlido;                             //Armazena na Strnig RFleitura para posterior comparação com cartões guardados no SD     
       }       
-      Verificar();
+      Verificar(RFleitura);
     }//Fecha SizaOf-------------------------------------------------------------
   }//Fecha primeiro While-------------------------------------------------------
 }
@@ -373,7 +370,7 @@ void loop(){
     Passatag();
     if (digitalRead(botao)==HIGH) {
       Menu();
-    }  
+    }  /*
      EthernetClient client = server.available();   // Verifica se tem alguém conectado
     if (client){
       boolean currentLineIsBlank = true;       // A requisição HTTP termina com uma linha em branco Indica o fim da linha
@@ -442,6 +439,6 @@ void loop(){
       }//Fecha While (client.connected())
       delay(3);// Espera um tempo para o navegador receber os dados
       client.stop(); // Fecha a conexão      
-    }//Fecha if(client)     
+    }//Fecha if(client)  */   
   }//Fecha Inicio_ok
 }//Fecha loop-------------------------------------------------------------------
