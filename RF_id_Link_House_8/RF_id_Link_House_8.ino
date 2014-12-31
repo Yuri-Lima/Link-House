@@ -116,6 +116,7 @@ void Desabilitar(){
 
 void Cadastro(){
   int m,b;
+  //AbrirSD();//Nessa posição não funciona, não entendi por que!!!
   boolean flag=false;
   Serial.println("Passe o cartao novo.");
   while(1){
@@ -127,7 +128,7 @@ void Cadastro(){
       }
       if (sizeof(lei)>=15){
         Leite=lei;
-        AbrirSD();
+        AbrirSD();//Importante está nesse posisção, pois é ele vai abrir o sd novamente com o valor da variavel Cartaogravado atualizada!
         //Ver se o cartão já está gravado no SD
         for(m=0;m<686;m+=14){ 
           if(Leite.substring(1,13).equals(cartaogravado.substring(m,m+12))){
@@ -149,12 +150,14 @@ void Cadastro(){
         }
         //Se tiver linha zerada ele cadastra por cima dessa linha    
         if(flag){
+          
           arquivo=SD.open("cadas.txt",FILE_WRITE);
           Serial.println(b);
           arquivo.seek(b);
           arquivo.println(Leite.substring(1,13));
           Serial.print("Cartao salvo com sucesso1!: ");
           Serial.println(Leite.substring(1,13));
+
           //Temos que fechar o arquivo o mais cedo possivel para liberar o ponteiro do arquivo     
           arquivo.close();
           Serial.println("Yuri ok");
@@ -191,21 +194,20 @@ void novatoInativo(){
     if (Serial.available()){
         switch (Serial.read()) {
         case 's': nomeCadas();
-        return;
+        
         break;
         case 'S': nomeCadas();
-        return;
+        
         break;
         case 'n': Serial.println("Fale com a administração!");
         return;
-        break;
         case 'N': Serial.println("Fale com a administração!");
         return;
-        break;
         default: Serial.println("Funcao invalida");
+        return;
       }//Fecha Switch funcaolida-------------------------------------------------
     }//Fecha While Serial--------------------------------------------------------
-    Passatag();
+    Passatag();//Para os proximos usuarios ficarem livres para passar a tag quando quiser, mesmo dentro do menu de escolha S N
   }//Fecha While HIGH------------------------------------------------------------
       
     
@@ -219,23 +221,88 @@ void novatoInativo(){
           break;*/
 }
 String Nome="";
+String Dia="";
+String Mes="";
+String Ano="";
 void nomeCadas(){
-  Serial.println("Digite seu primeiro nome + dia(DD) + mes(MM) + ano(AAAA). Exemplo: Yuri22122014");
-  Serial.println("Confirme os dados digitados antes de da enter!");
-  /*if(Serial.available()){
-    for(int n=0;n<=49;n++){
-      nome[n]= Serial.read();                         //Valolido é char
-      delay(10);
-      Serial.println(nome);
-    }    
-  }*/
-  arquivo=SD.open("cadas.txt",FILE_WRITE);
-          arquivo.println(Leite.substring(1,13));
-          Serial.print("Cartao salvo com sucesso2!: ");
-          Serial.println(Leite.substring(1,13));
-          //Temos que fechar o arquivo o mais cedo possivel para liberar o ponteiro do arquivo     
-          arquivo.close();
-          //break;
+
+  boolean flag3=true, flag4=false, flag5=false,flag6=false;
+  Serial.println("Digite seu primeiro nome + * exemplo: Yuri*");
+  while(flag3){
+    delay(10);
+    while (Serial.available()){
+      char Novato=Serial.read();
+      Nome+=Novato;
+      if(Nome.endsWith("*")){
+        Serial.print("Olá, ");
+        Serial.println(Nome);
+        flag4=true;
+        flag3=false;
+      } 
+    }//Fecha While Serial--------------------------------------------------------
+  }//Fecha While HIGH------------------------------------------------------------
+  Serial.println("Digite a data de hoje => Exemplo: 22/12/2014*");
+  Serial.println("Digite 1° o dia + / => Exemplo: 21/");
+  while(flag4){
+   delay(10);
+   while (Serial.available()){
+      char Novato=Serial.read();
+      Dia+=Novato;
+      if(Dia.endsWith("/")){
+        Serial.print("Hoje é dia: ");
+        Serial.println(Dia);
+        //SD.mkdir(cadas.txt);
+        flag5=true;
+        flag4=false;
+      } 
+    }//Fecha While Serial--------------------------------------------------------
+  } 
+  Serial.println("Digite o Mes + / => Exemplo: 12/");
+  while(flag5){
+   delay(10);
+   while (Serial.available()){
+      char Novato=Serial.read();
+      Mes+=Novato;
+      if(Mes.endsWith("/")){
+        Serial.print("do Mes: ");
+        Serial.println(Mes);
+        //SD.mkdir(cadas.txt);
+        flag6=true;
+        flag5=false;
+      } 
+    }//Fecha While Serial--------------------------------------------------------
+  } 
+  Serial.println("Digite o Ano + * => Exemplo: 12*");
+  while(flag6){
+   delay(10);
+   while (Serial.available()){
+      char Novato=Serial.read();
+      Ano+=Novato;
+      if(Ano.endsWith("*")){
+        Serial.print("do Ano: ");
+        Serial.println(Ano);
+        //SD.mkdir(cadas.txt);
+        flag6=false;
+      } 
+    }//Fecha While Serial--------------------------------------------------------
+  } 
+
+  if(flag3==false && flag4==false && flag5==false && flag6==false){
+    arquivo=SD.open("NomeData.txt",FILE_WRITE);
+    arquivo.print(Nome);
+    arquivo.print(Dia);
+    arquivo.print(Mes);
+    arquivo.println(Ano);
+    Serial.print("Dados salvo com sucesso!: ");
+    Serial.print(Nome);
+    Serial.println();
+    Serial.print(Dia);
+    Serial.print(Mes);
+    Serial.print(Ano);
+    //Temos que fechar o arquivo o mais cedo possivel para liberar o ponteiro do arquivo     
+    arquivo.close();
+    //break;*/
+  }  
 }
 
 void ExcluirArq(){
@@ -370,7 +437,7 @@ void loop(){
     Passatag();
     if (digitalRead(botao)==HIGH) {
       Menu();
-    }  /*
+    }  
      EthernetClient client = server.available();   // Verifica se tem alguém conectado
     if (client){
       boolean currentLineIsBlank = true;       // A requisição HTTP termina com uma linha em branco Indica o fim da linha
