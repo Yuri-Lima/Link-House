@@ -27,8 +27,6 @@ File arquivo;
 byte ok;
 byte estadoip=0x00;                             //Variavel de teste. Se conexão interna ou externa
 boolean Estado=false;
-boolean flag2=false;
-
 String desativado="000000000000\0";
  
 
@@ -184,20 +182,19 @@ void Cadastro(){
 }//Fecha Funcao Cadastro------------------------------------------------------
 
 void novatoInativo(){
-  flag2=true;
-  Serial.println("Olá, você é novato ou foi desativado por tempo inativo!");
+  boolean flag8=false;
+  Serial.println("Olá, você é novato ou foi desativado por tempo de inatividade!");
   Serial.println("Deseja se cadastrar? Entao digite: ");
   Serial.println("S para sim ou N para nao");
   delay(10);
-  while(flag2){
+  flag8=true;
+  while(flag8){
     delay(10);
     if (Serial.available()){
         switch (Serial.read()) {
         case 's': nomeCadas();
-        
         break;
         case 'S': nomeCadas();
-        
         break;
         case 'n': Serial.println("Fale com a administração!");
         return;
@@ -209,23 +206,13 @@ void novatoInativo(){
     }//Fecha While Serial--------------------------------------------------------
     Passatag();//Para os proximos usuarios ficarem livres para passar a tag quando quiser, mesmo dentro do menu de escolha S N
   }//Fecha While HIGH------------------------------------------------------------
-      
-    
-  //}  
-  /*arquivo=SD.open("cadas.txt",FILE_WRITE);
-          arquivo.println(Leite.substring(1,13));
-          Serial.print("Cartao salvo com sucesso2!: ");
-          Serial.println(Leite.substring(1,13));
-          //Temos que fechar o arquivo o mais cedo possivel para liberar o ponteiro do arquivo     
-          arquivo.close();
-          break;*/
 }
+
 String Nome="";
 String Dia="";
 String Mes="";
 String Ano="";
 void nomeCadas(){
-
   boolean flag3=true, flag4=false, flag5=false,flag6=false;
   Serial.println("Digite seu primeiro nome + * exemplo: Yuri*");
   while(flag3){
@@ -332,7 +319,7 @@ void Ativos(){
 }//Fecha Ativos------------------------------------------------------------------- 
 
 void Menu(){
-  flag2=true; 
+  boolean flag7=false;
   Serial.println("Qual a funcao do menu voce deseja?");
   Serial.println();
   Serial.println("1 - Cadastro de novo cartao.");
@@ -345,27 +332,29 @@ void Menu(){
   Serial.println();
   delay(100);
   //Fecha if HIGH-------------------------------------------------------------
-  while(flag2){
+  flag7=true; 
+  while(flag7){
     delay(10);
     while (Serial.available()){
       switch (Serial.read()) {
         case '1': Cadastro();
-        flag2=false;
+        flag7=false;
         
         break;
         case '2': ExcluirArq();
-        flag2=false;
+        flag7=false;
         
         break;
         case '3': Ativos();
-        flag2=false;
+        flag7=false;
         
         break;
         case '4': Desabilitar();
-        flag2=false;
+        flag7=false;
         
         break;
         default: Serial.println("Funcao invalida");
+        flag7=false;
         break;
       }//Fecha Switch funcaolida-------------------------------------------------
     }//Fecha While Serial--------------------------------------------------------
@@ -375,16 +364,16 @@ void Menu(){
 void Verificar(String RF){
  // Faz as comparações com o que esta gravado no SD e com o ponteiro char* cartoes[]  
   AbrirSD(); 
-  boolean flag=false; 
+  boolean flag1=false; 
   for(int m=0;m<686;m+=14){ 
   	if(RF.substring(1,13).equals(cartaogravado.substring(m,m+12))){
-  		flag=true;
+  		flag1=true;
   		Serial.print(m); Serial.print(",");
 		  Serial.println(m+12);	
   		break;
   	}
   }
-  if (flag){
+  if (flag1){
    	Serial.println("Usuario Valido!");
     Serial.println("Acesso Liberado!");
     //Menu();
@@ -397,9 +386,7 @@ void Verificar(String RF){
     //Recadastro();
   }
 }
-void Cargas(){
-return;
-}
+
 void AbrirSD(){
 //Abrir arquivo SD -------------------------------------------------------- 
   arquivo=SD.open("cadas.txt");
@@ -410,9 +397,9 @@ void AbrirSD(){
     }//fecha while Sd open---------------------------------------------------
     arquivo.close();
   }//Fecha if arquivo--------------------------------------------------------
-  else{
+  /*else{
     Serial.println("Erro ao abrir o arquivo de leitura");
-  }
+  }*/
 }
 void Passatag(){
   //Inicio das leituras dos cartoes ou tags-------------------------------------
