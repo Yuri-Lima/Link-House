@@ -15,8 +15,10 @@ String RFleitura="",cartaogravado="",Leite="";
 char leicartao, leiturabutao;
 char lei[17]={};
 char valorlido[17]={};
-char* Carga[]={"Nome"};
+char* Carga[]={"online"};
 char nome[50]={};
+int ml;
+
 
 
 //Classe da biblioteca Sd que ajuda na manipulação de arquivos------------------
@@ -27,6 +29,7 @@ File arquivo;
 byte ok;
 byte estadoip=0x00;                             //Variavel de teste. Se conexão interna ou externa
 boolean Estado=false;
+boolean Estado1=false;
 String desativado="000000000000\0";
  
 
@@ -44,8 +47,6 @@ void setup(){
   pinMode(botao,INPUT_PULLUP);
   Serial.begin(9600);
   RFID.begin(9600);
-  
-   
   //Não vai pro loop, se não tiver cartão----------------------------------------
   ok=1;
   if(!SD.begin(4)){
@@ -418,14 +419,15 @@ void Passatag(){
     }//Fecha SizaOf-------------------------------------------------------------
   }//Fecha primeiro While-------------------------------------------------------
 }
-
+String idInternet="";
 void loop(){ 
   if(ok){
     Passatag();
     if (digitalRead(botao)==HIGH) {
       Menu();
-    }  
-     EthernetClient client = server.available();   // Verifica se tem alguém conectado
+    } 
+    
+    EthernetClient client = server.available();   // Verifica se tem alguém conectado
     if (client){
       boolean currentLineIsBlank = true;       // A requisição HTTP termina com uma linha em branco Indica o fim da linha
       String valPag;                           //Varialvel que vai receber a concat de c
@@ -460,25 +462,58 @@ void loop(){
             client.print(" <center> <button onclick=\"window.location.href='http://192.168.25.177/interno/0001'\">\0</button> > Codigo: 0001 >"):
             client.print(" <center> <button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/0001'\">\0</button> > Codigo: 0001 > ");
             if(Estado){
-              client.print("<B><span style=\"color: #000000;\">");  
-              client.print(Carga[0]);
-              delay(10);
-              //digitalWrite(luzG,HIGH);
-              client.print("</span></B></left>");
-              client.print("<B><span style=\"color: #00ff00;\">");
-              client.print(" - ON");     
-              client.print("</span></B></left>");
-            }         
-            else{
-              client.print("<B><span style=\"color: #000000;\">");
-              client.print(Carga[0]);
-              delay(10);
-              //digitalWrite(luzG,LOW);
-              client.print("</span></B></left>");
-              client.print("<B><span style=\"color: #ff0000;\">");
-              client.print(" - OFF");
-              client.print("</span></B></left>");
-            }  
+               boolean flag1=false; 
+              for( ml=0;ml<50;ml+=14){ 
+                if(RFleitura.substring(1,13).equals(cartaogravado.substring(ml,ml+12))){
+                  flag1=true;
+                  break;
+                }
+              }
+              if (flag1){
+                client.print("<B><span style=\"color: #000000;\">");  
+                client.print(cartaogravado.substring(ml,ml+12));
+                delay(10);
+                //digitalWrite(luzG,HIGH);
+                client.print("</span></B></left>");
+                client.print("<B><span style=\"color: #00ff00;\">");
+                client.print(" - ON");     
+                client.print("</span></B></left>");
+              }
+              else if(Estado==false){
+                client.print("<B><span style=\"color: #000000;\">");
+                client.print(Carga[0]);
+                client.print("asdasd");
+                delay(10);
+                //digitalWrite(luzS,LOW);
+                client.print("</span></B></left>");
+                client.print("<B><span style=\"color: #ff0000;\">");
+                client.print(" - OFF");
+                client.print("</span></B></left>");
+              }
+            }
+            if(Estado1){           
+            client.print("<B><span style=\"color: #000000;\">");  
+            client.print(Carga[0]);
+            delay(10);
+            //digitalWrite(luzS,HIGH);
+            client.print("</span></B></left>");
+            client.print("<B><span style=\"color: #00ff00;\">");
+            client.print(" - ON");     
+            client.print("</span></B></left>");
+          }         
+          else{
+            client.print("<B><span style=\"color: #000000;\">");
+            client.print(Carga[0]);
+            delay(10);
+            //digitalWrite(luzS,LOW);
+            client.print("</span></B></left>");
+            client.print("<B><span style=\"color: #ff0000;\">");
+            client.print(" - OFF");
+            client.print("</span></B></left>");
+          }  
+
+
+
             client.print("<BR>");
             if (estadoip==1){
               client.print(" <meta http-equiv=\"refresh\" content=\"4; url=http://192.168.25.177/interno \"> ");

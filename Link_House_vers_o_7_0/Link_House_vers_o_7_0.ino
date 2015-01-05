@@ -1,8 +1,11 @@
 #include <Ethernet.h>
+#include <LiquidCrystal.h>
 #include <SPI.h>
 #define sensorP 39                               //Sensores ainda não definidos
 #define sensorG 40                               //Sensores ainda não definidos
 #define Sensor  A0                               //Sensore de temperatura
+
+  LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
   byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
   IPAddress ip(192,168,25,177);                  // assign an IP address for the controller: 
@@ -37,6 +40,7 @@ void setup()
   pinMode(Sensor,INPUT); 
   Serial.begin(9600);
   Ethernet.begin(mac, ip);                      // Inicializa o Server com o IP e Mac atribuido acima
+ lcd.begin(16, 2);
 }
 
 void loop()
@@ -99,7 +103,7 @@ void loop()
           client.print("<HTML> ");
           client.print("<center><h2 style='color: red; font-size:30px; text-align:center;'> ATEN&Ccedil&AtildeO! </h2>");
           client.print("<center><h4> Pessoal que acender a luz, por favor apague, se perceberem que a luz est&aacute apagando &eacute pq sou eu que apago!</h4>");
-          client.println("<center> <a href='http://www.yurilima.com.br\'> <img src=http://yurilima.com.br/images/captura%20de%20tela%202014-09-30%20163404.jpg width 750 height=350></a>");
+          client.println("<center> <a href='http://www.yurilima.com.br\'> <img src=http://uthmag.com/wp-content/uploads/2014/09/may11_BG_Smart_Home_Tech_2-620x291.jpg width 750 height=350></a>");
           client.println("<p style='font-size:15'>by  Yuri Lima  &  Isaac Cavalcante");
           //=========================================================================================================================
           //Temperatura
