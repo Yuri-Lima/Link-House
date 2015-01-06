@@ -1,11 +1,9 @@
 #include <Ethernet.h>
-#include <LiquidCrystal.h>
 #include <SPI.h>
+#include <SD.h>
 #define sensorP 39                               //Sensores ainda não definidos
 #define sensorG 40                               //Sensores ainda não definidos
 #define Sensor  A0                               //Sensore de temperatura
-
-  LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
   byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
   IPAddress ip(192,168,25,177);                  // assign an IP address for the controller: 
@@ -23,12 +21,18 @@
   byte estadoip=0x00;                           //Variavel de teste. Se conexão interna ou externa
   byte PINOUT[]= {31,32,33,34,35,36,37,38};     //Array dos pinos das cargas setado como saida   
 
-void setup()
-{
-	for(byte C=0; C<=9;C++){                      //Seta os nomes das cargas
-	 Carga[9];
-  }  
+void setup(){
+  Ethernet.begin(mac, ip);// Inicializa o Server com o IP e Mac atribuido acima
+  Serial.begin(9600); 
 
+  if(!SD.begin(4)){
+    Serial.println("Erro ao iniciar cartao SD");
+    Serial.println("Diagnostico: Sem cartao SD");
+  }
+  else{
+    Serial.println("Cartao SD Iniciado");
+  }
+	 
 	for(byte estado=0; estado<=9;estado++){       //Seta
 	 arrayEstado[estado]=false;
   }
@@ -36,11 +40,12 @@ void setup()
   for (byte p=31; p<=38;p++){                   //Seta os pinos das cargas como saida
    pinMode(PINOUT[p],OUTPUT);
   }
-
+  
   pinMode(Sensor,INPUT); 
-  Serial.begin(9600);
-  Ethernet.begin(mac, ip);                      // Inicializa o Server com o IP e Mac atribuido acima
- lcd.begin(16, 2);
+ 
+  
+  //digitalWrite(4,HIGH);
+  
 }
 
 void loop()
@@ -109,7 +114,7 @@ void loop()
           //Temperatura
           client.print("<BR><BR><BR>");
           estadoip==1? //Operador Ternario
-          client.print(" <center> <style='font-size:20px; 'button onclick=\"window.location.href='http://192.168.25.177/interno/1110' \">\0</button> > Codigo: 1110 > ") 
+          client.print(" <center> <style='font-size:20px; 'button onclick=\"window.location.href='http://192.168.25.177/interno/1110'\">\0</button> > Codigo: 1110 > ") 
           :client.print("<center> <style='font-size:20px; 'button onclick=\"window.location.href='http://arduinoyuri.dyndns.org/externo/1110'\">\0</button> > Codigo: 1110 >");
           if(A0_estado){
             int temp = (5.0 * analogRead(Sensor) * 100.0) / 1024;
