@@ -18,8 +18,12 @@ char valorlido[17]={};
 char* Carga[]={"online"};
 char nome[50]={};
 int ml;
-
-
+//Variaceis do debounce-------------------------------------------------------
+int reading;
+int buttonState;
+int lastButtonState = LOW;
+unsigned long lastDebounceTime = 0;
+unsigned long debounceDelay = 200; 
 
 //Classe da biblioteca Sd que ajuda na manipulação de arquivos------------------
 //Classe File
@@ -52,7 +56,7 @@ void setup(){
   if(!SD.begin(4)){
     Serial.println("Erro ao iniciar cartao SD");
     Serial.println("Diagnostico: Sem cartao SD");
-    ok=1;
+    ok=0;
     return;
   }
   else{
@@ -63,7 +67,7 @@ void setup(){
 
 void Desabilitar(){
   int m;
-  Serial.println("Passe o cartao que que vai Desabilitar.");
+  Serial.println("Passe o cartao que vai Desabilitar.");
   while(1){
     if(RFID.available()){
       for(int i=0;i<=15;i++){
@@ -87,7 +91,7 @@ void Desabilitar(){
           Serial.println(m); 
 
           Serial.println("Cartao desabilitado com sucesso!");
-          arquivo=SD.open("cadas.txt",FILE_WRITE);
+          arquivo=SD.open("Cadastro.txt",FILE_WRITE);
           if(arquivo){
             arquivo.seek(m);
             arquivo.println(desativado.substring(0,12));
@@ -134,7 +138,7 @@ void Cadastro(){
             Serial.print("Este cartão já esta cadastrado! ");
             Serial.println(m);
             cartaogravado="";
-            return;//Não pode ser break pq depois de verificar ele tem que sair da função! Se colocar break ele vai sair somente do for!
+            break;//Não pode ser break pq depois de verificar ele tem que sair da função! Se colocar break ele vai sair somente do for!
           }
         }
         //Ver se tem alguma cadastro com linha zerada "000000000000\0" no SD
@@ -150,7 +154,7 @@ void Cadastro(){
         //Se tiver linha zerada ele cadastra por cima dessa linha    
         if(flag){
           
-          arquivo=SD.open("cadas.txt",FILE_WRITE);
+          arquivo=SD.open("Cadastro.txt",FILE_WRITE);
           Serial.println(b);
           arquivo.seek(b);
           arquivo.println(Leite.substring(1,13));
@@ -167,7 +171,7 @@ void Cadastro(){
         else {
           //novatoInativo();
           
-          arquivo=SD.open("cadas.txt",FILE_WRITE);
+          arquivo=SD.open("Cadastro.txt",FILE_WRITE);
           arquivo.println(Leite.substring(1,13));
           Serial.print("Cartao salvo com sucesso2!: ");
           Serial.println(Leite.substring(1,13));
@@ -239,7 +243,7 @@ void nomeCadas(){
       if(Dia.endsWith("/")){
         Serial.print("Hoje é dia: ");
         Serial.println(Dia);
-        //SD.mkdir(cadas.txt);
+        //SD.mkdir(Cadastro.txt);
         flag5=true;
         flag4=false;
       } 
@@ -254,7 +258,7 @@ void nomeCadas(){
       if(Mes.endsWith("/")){
         Serial.print("do Mes: ");
         Serial.println(Mes);
-        //SD.mkdir(cadas.txt);
+        //SD.mkdir(Cadastro.txt);
         flag6=true;
         flag5=false;
       } 
@@ -269,7 +273,7 @@ void nomeCadas(){
       if(Ano.endsWith("*")){
         Serial.print("do Ano: ");
         Serial.println(Ano);
-        //SD.mkdir(cadas.txt);
+        //SD.mkdir(Cadastro.txt);
         flag6=false;
       } 
     }//Fecha While Serial--------------------------------------------------------
@@ -295,8 +299,8 @@ void nomeCadas(){
 
 void ExcluirArq(){
 
- SD.remove("cadas.txt");
-  if(!SD.exists("cadastro.txt")){
+ SD.remove("Cadastro.txt");
+  if(!SD.exists("Cadastro.txt")){
     Serial.println("Cartoes apagados com sucesso");
     cartaogravado="";//Zera a String para nao habilitar mais acessos
   }
@@ -306,7 +310,7 @@ void ExcluirArq(){
 }//Fecha ExcluirArq-----------------------------------------------------------
 
 void Ativos(){
- arquivo = SD.open("cadas.txt",FILE_READ);
+ arquivo = SD.open("Cadastro.txt");
   if (arquivo) {
     Serial.println("Cartoes cadastrado: ");
     while (arquivo.available()) {
@@ -337,25 +341,32 @@ void Menu(){
   while(flag7){
     delay(10);
     while (Serial.available()){
-      switch (Serial.read()) {
+      char op=Serial.read();
+      switch (op) {
+        Serial.println("Serial.read()");
+        Serial.println(op);
         case '1': Cadastro();
         flag7=false;
-        
+        //return;
+        //flag7=false;
         break;
+
         case '2': ExcluirArq();
+        //return;
         flag7=false;
-        
         break;
+
         case '3': Ativos();
+        //return;
         flag7=false;
-        
         break;
+
         case '4': Desabilitar();
+        //return;
         flag7=false;
-        
         break;
-        default: Serial.println("Funcao invalida");
-        flag7=false;
+
+        default: Serial.println("Funcao invalida2");
         break;
       }//Fecha Switch funcaolida-------------------------------------------------
     }//Fecha While Serial--------------------------------------------------------
@@ -363,7 +374,8 @@ void Menu(){
 }//Fecha Leiturabotao()----------------------------------------------------------
 
 void Verificar(String RF){
- // Faz as comparações com o que esta gravado no SD e com o ponteiro char* cartoes[]  
+ // Faz as comparações com o que esta gravado no SD e com o ponteiro char* cartoes[]
+
   AbrirSD(); 
   boolean flag1=false; 
   for(int m=0;m<686;m+=14){ 
@@ -390,17 +402,19 @@ void Verificar(String RF){
 
 void AbrirSD(){
 //Abrir arquivo SD -------------------------------------------------------- 
-  arquivo=SD.open("cadas.txt");
+  arquivo=SD.open("Cadastro.txt");
   if(arquivo){
     while(arquivo.available()){
       leicartao = arquivo.read();                    //leicartao é char
       cartaogravado += leicartao;                    //cartaogravado String
     }//fecha while Sd open---------------------------------------------------
+    //Serial.println("abriu o arquivo");
     arquivo.close();
+
   }//Fecha if arquivo--------------------------------------------------------
-  /*else{
-    Serial.println("Erro ao abrir o arquivo de leitura");
-  }*/
+  //else{
+    //Serial.println("Erro ao abrir o arquivo de leitura");
+ // }
 }
 void Passatag(){
   //Inicio das leituras dos cartoes ou tags-------------------------------------
@@ -423,10 +437,24 @@ String idInternet="";
 void loop(){ 
   if(ok){
     Passatag();
-    if (digitalRead(botao)==HIGH) {
-      Menu();
+    //Efeito debounce-----------------------------------------------------------
+    reading=digitalRead(botao);
+    //Serial.println(reading);
+    if (reading != lastButtonState) {
+      lastDebounceTime=millis();
+      //Serial.println(reading);
     } 
-    
+    if ((millis() - lastDebounceTime) > debounceDelay) {
+      if(reading!=buttonState){
+          buttonState=reading;
+          //Serial.println(reading);
+          if(buttonState==HIGH){
+              Menu();
+          }
+      }
+    }
+    lastButtonState = reading;
+    /*
     EthernetClient client = server.available();   // Verifica se tem alguém conectado
     if (client){
       boolean currentLineIsBlank = true;       // A requisição HTTP termina com uma linha em branco Indica o fim da linha
