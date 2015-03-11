@@ -1,56 +1,55 @@
-#include <Ethernet.h>
 #include <SPI.h>
+#include <Ethernet.h>
 #include <SD.h>
 #define sensorP 39                               //Sensores ainda não definidos
 #define sensorG 40                               //Sensores ainda não definidos
 #define Sensor  A0                               //Sensore de temperatura
+// Enter a MAC address and IP address for your controller below.
+// The IP address will be dependent on your local network:
+byte mac[] = {
+  0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
+IPAddress ip(192, 168, 25, 177);
 
-  byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
-  IPAddress ip(192,168,25,177);                  // assign an IP address for the controller: 
-  IPAddress gateway(192,168,25,1);   	
-  IPAddress subnet(255, 255, 255, 0);
-  EthernetServer server(80);
+// Initialize the Ethernet server library
+// with the IP address and port you want to use
+// (port 80 is default for HTTP):
+EthernetServer server(80);
 
   float temp;                                   //Variavel de temperatura
   char* A0_carga = "Temperatura";               //Nomes das cargas
-  char* Carga[] = {"Luz da Garagem","Luz do Jardim","Luz da Sala","Luz da Cozinha","Luz do Quarto 01","Luz do Quarto 02",
-  "Porta da Rua","Porta da Garagem","Senso de Presenca","Sensor de Gases"}; //Nomes das cargas
-
   boolean arrayEstado[9];                       //Se true entrar para acionar as cargas
   boolean A0_estado=true;                       //Se true entrar para verificar a temperatura
   byte estadoip=0x00;                           //Variavel de teste. Se conexão interna ou externa
-  byte PINOUT[]= {31,32,33,34,35,36,37,38};     //Array dos pinos das cargas setado como saida   
+  //byte PINOUT[]= {31,32,33,34,35,36,37,38};     //Array dos pinos das cargas setado como saida 
+  char* Carga[] = {"Luz da Garagem","Luz do Jardim","Luz da Sala","Luz da Cozinha","Luz do Quarto 01","Luz do Quarto 02",
+  "Porta da Rua","Porta da Garagem","Senso de Presenca","Sensor de Gases"}; //Nomes das cargas  
 
-void setup(){
-  Ethernet.begin(mac, ip);// Inicializa o Server com o IP e Mac atribuido acima
-  Serial.begin(9600); 
+void setup() {
 
-  if(!SD.begin(4)){
-    Serial.println("Erro ao iniciar cartao SD");
-    Serial.println("Diagnostico: Sem cartao SD");
-  }
-  else{
-    Serial.println("Cartao SD Iniciado");
-  }
-	 
-	for(byte estado=0; estado<=9;estado++){       //Seta
-	 arrayEstado[estado]=false;
-  }
+  // Open serial communications and wait for port to open:
+  Serial.begin(9600);
+  // start the Ethernet connection and the server:
+  Ethernet.begin(mac, ip);
+  server.begin();
+  Serial.print("server is at ");
+  Serial.println(Ethernet.localIP());
+    for(int b=31;b<=38;b++){ //Pinos das cargas setado como saida 
+      pinMode(b,OUTPUT);
+    }
+    if(!SD.begin(4)){
+      Serial.println("Erro ao iniciar cartao SD");
+      Serial.println("Diagnostico: Sem cartao SD");
+    }
+    else{
+      Serial.println("Cartao SD Iniciado");
+    }
+  
+  
 
-  for (byte p=31; p<=38;p++){                   //Seta os pinos das cargas como saida
-   pinMode(PINOUT[p],OUTPUT);
-  }
-  
-  pinMode(Sensor,INPUT); 
- 
-  
-  //digitalWrite(4,HIGH);
-  
 }
 
-void loop()
-{
-  EthernetClient client = server.available();   // Verifica se tem alguém conectado
+void loop() {
+ EthernetClient client = server.available();   // Verifica se tem alguém conectado
   if (client){
     boolean currentLineIsBlank = true;       // A requisição HTTP termina com uma linha em branco Indica o fim da linha
     String valPag;                           //Varialvel que vai receber a concat de c
@@ -58,7 +57,9 @@ void loop()
     {
       if (client.available()){               //Esperando dados
         char c = client.read();              //Variável para armazenar os caracteres que forem recebidos
-        valPag.concat(c);                    // Pega os valor após o IP do navegador ex: 192.168.1.2/0001        
+        Serial.write(c); 
+        valPag.concat(c);                    // Pega os valor após o IP do navegador ex: 192.168.1.2/0001 
+
         //Compara o que foi recebido
         if(valPag.endsWith("interno")){      //Acesso interno da rede
           estadoip = 1;
@@ -104,7 +105,9 @@ void loop()
           //Inicia página HTML
           client.println("HTTP/1.1 200 OK");
           client.println("Content-Type: text/html");
+          client.println("Connection: close");
           client.println();
+          client.println("<!DOCTYPE HTML>");
           client.print("<HTML> ");
           client.print("<center><h2 style='color: red; font-size:30px; text-align:center;'> ATEN&Ccedil&AtildeO! </h2>");
           client.print("<center><h4> Pessoal que acender a luz, por favor apague, se perceberem que a luz est&aacute apagando &eacute pq sou eu que apago!</h4>");
@@ -394,7 +397,7 @@ void loop()
           //=========================================================================================================================
           client.print("<BR>");
           if (estadoip==1){
-           client.print(" <meta http-equiv=\"refresh\" content=\"4; url=http://192.168.25.177/interno \"> ");
+           client.print(" <meta http-equiv=\"refresh\" content=\"4; url=http://192.168.25.170/interno \"> ");
           }
           if (estadoip==2)  {    
             client.print(" <meta http-equiv=\"refresh\" content=\"4; url=http://arduinoyuri.dyndns.org/externo \"> ");
