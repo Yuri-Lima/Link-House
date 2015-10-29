@@ -96,7 +96,7 @@ void loop() {
 #if DEBUG
     Serial.println(F("Teste de Comunicacao."));
 #endif
-    client.println(T_comu(pc_Request.charAt(0)));
+    client.println(pc_Request.charAt(0));
   }
   delay(1);
 #if DEBUG
@@ -115,8 +115,4 @@ String Status(String pc_Request) {
   pc_Request.setCharAt(8, '#');
   pc_Request.setCharAt(9, '#');
   return pc_Request;
-}
-char T_comu(char pc_Request) {
-  return pc_Request;
-
 }
