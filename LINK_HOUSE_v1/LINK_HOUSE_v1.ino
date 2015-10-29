@@ -98,11 +98,6 @@ void loop() {
 #endif
     client.println(T_comu(pc_Request.charAt(0)));
   }
-  // Return the response
-  client.println(F("HTTP/1.1 200 OK"));
-  client.println(F("Content-Type: text/plain"));
-  client.println(""); //  do not forget this one
-  client.println(F("Ok"));
   delay(1);
 #if DEBUG
   Serial.println(F("Client disonnected"));
