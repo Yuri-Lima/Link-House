@@ -19,7 +19,7 @@
 <li>Varistor and Inductor as protection of the circuit;</li>
 <li>General conectors.;</li>
 </ul>
-###Images Homefi Ax Module Prototypes
+# Images Homefi Ax Module Prototypes
 ![5](https://user-images.githubusercontent.com/9964218/86464434-68550d00-bd27-11ea-8a85-e4c73486b778.jpg)
 ![4](https://user-images.githubusercontent.com/9964218/86464442-6d19c100-bd27-11ea-8037-a6780784587c.jpg)
 ![3](https://user-images.githubusercontent.com/9964218/86464445-6ee38480-bd27-11ea-9b70-ae0a82b118bd.jpg)
@@ -30,6 +30,4 @@
 ![2](https://user-images.githubusercontent.com/9964218/86464467-79058300-bd27-11ea-8ade-45f02b04b1dd.jpg)
     
 <p>See the documentation for other ways to run Code Domino on your Decabot!</p>
-</article>
-      </div>
-  </div>
+
