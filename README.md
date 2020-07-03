@@ -20,7 +20,7 @@
 <li>General conectors.;</li>
 </ul>
 <style>
-        * {
+        {
             margin: 0;
             padding: 0;
         }
@@ -33,12 +33,11 @@
             max-height: 100vh;
             margin: auto;
         }
-    </style>
-</head>
-<body>
+</style>
 <div class="imgbox">
-    <img class="center-fit" src='https://github.com/Images/1.jpg'>
+    <img class="center-fit" src="https://github.com/Images/1.jpg">
 </div>
+
 <p>See the documentation for other ways to run Code Domino on your Decabot!</p>
 </article>
       </div>
