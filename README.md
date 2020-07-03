@@ -40,6 +40,7 @@ The Homefi module was created to be easily installed by users with little knowle
 > ### Contact
 
 > **Atention** If you go email me, please put as subject the name of the project, in this case: **(Homefi AX) Requests**
+
 |  Name |  Email | Mobile  |
 |-------|--------|---------|
 |  Yuri Lima | y.m.lima19@gmail.com  | +353 83 419.1605  |   
