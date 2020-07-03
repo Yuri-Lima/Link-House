@@ -1,4 +1,4 @@
-<!-- Headings --> <!-- Strong --> <!-- Italics --> <!-- Blockquote --> <!-- Links --> <!-- UL --> <!-- OL --> <!-- Images -->
+<!-- Headings --> <!-- Strong --> <!-- Italics --> <!-- Blockquote --> <!-- Links --> <!-- UL --> <!-- OL --> <!-- Images --> <!-- Code Blocks --> <!-- Tables -->
 
 > # Homefi AX
 
@@ -39,9 +39,9 @@ The Homefi module was created to be easily installed by users with little knowle
 
 > ### Contact
 
-* Yuri Lima
-* y.m.lima19@gmail.com
-* +353 83 419.1605
 > **Atention** If you go email me, please put as subject the name of the project, in this case: **(Homefi AX) Requests**
+|  Name |  Email | Mobile  |
+|-------|--------|---------|
+|  Yuri Lima | y.m.lima19@gmail.com  | +353 83 419.1605  |   
 
 
