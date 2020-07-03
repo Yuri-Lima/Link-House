@@ -20,8 +20,6 @@
 <li>General conectors.;</li>
 </ul>
 
-Images/1.jpg
-
 <p>See the documentation for other ways to run Code Domino on your Decabot!</p>
 </article>
       </div>
