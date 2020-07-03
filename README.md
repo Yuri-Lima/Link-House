@@ -19,24 +19,8 @@
 <li>Varistor and Inductor as protection of the circuit;</li>
 <li>General conectors.;</li>
 </ul>
-<style>
-        {
-            margin: 0;
-            padding: 0;
-        }
-        .imgbox {
-            display: grid;
-            height: 100%;
-        }
-        .center-fit {
-            max-width: 100%;
-            max-height: 100vh;
-            margin: auto;
-        }
-</style>
-<div class="imgbox">
-    <img class="center-fit" src="https://github.com/Images/1.jpg">
-</div>
+
+Images/1.jpg
 
 <p>See the documentation for other ways to run Code Domino on your Decabot!</p>
 </article>
