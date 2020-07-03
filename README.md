@@ -3,8 +3,8 @@
 
 > # Homefi AX
 
-### The project started in 2014 was created with the intention of providing access to home automation to the average family income population.
-The Homefi module was created to be easily installed by users with little knowledge in home electronics, requiring only the connection of little wires for the system to be installed. The Homefi project was cancelled around at 2016 after the launch of the Chinese module called Sonoff which basically does the same service that Homefo AX would do. **Web site:** [sonoff](https://sonoff.tech/) 
+### The project started in 2014. This project had the intention to created access for home automation to find an of family income population.
+The Homefi module was created to be easily installed by users with low knowledge in home electronics. The unique skills  required the user wasi the connection of wires for the system to be installed. The Homefi project was cancelled around at 2016 after the launch of the Chinese module called Sonoff. This module basically does the same service as Homefi AX. **Web site:** [sonoff](https://sonoff.tech/) 
 
 > ### Hardware
 
